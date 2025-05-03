@@ -28,55 +28,56 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="name" class="form-label">Project Name</label>
-                            <input type="text" id="name" class="form-control" required
+                            <input type="text" id="name" name="name" class="form-control" required
                                    placeholder="Enter project name">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="year" class="form-label">Year</label>
-                            <input type="number" id="year" class="form-control" required
+                            <input type="number" id="year" name="year" class="form-control" required
                                    placeholder="Year of the project" min="2000" max="2030">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="description" class="form-label">Short Description</label>
-                        <textarea id="description" class="form-control" rows="3"
+                        <textarea id="description" name="description" class="form-control" rows="3"
                                   placeholder="Brief description of your project"></textarea>
                     </div>
 
                     <div class="mb-3">
                         <label for="courseIds" class="form-label">Related Courses</label>
-                        <select id="courseIds"  class="form-control select2" multiple>
+                        <select id="courseIds" name="courseIds" class="form-control select2" multiple>
                             <option th:each="course : ${availableCourses}"
                                     th:value="${course.id}"
-                                    th:text="${course.code + ' - ' + course.name}">CS101 - Course Name</option>
+                                    th:text="${course.name}">CS101 - Course Name</option>
                         </select>
                         <small class="form-text text-muted">You can select multiple courses</small>
                     </div>
 
                     <div class="mb-3">
                         <label for="mentorIds" class="form-label">Project Mentors</label>
-                        <select id="mentorIds" class="form-control select2" multiple>
+                        <select id="mentorIds" name="mentorIds" class="form-control select2" multiple>
                             <option th:each="mentor : ${availableMentors}"
                                     th:value="${mentor.id}"
-                                    th:text="${mentor.title + ' ' + mentor.firstName + ' ' + mentor.lastName}">Prof. John Smith</option>
+                                    th:text="${mentor.name + ' ' + mentor.getEmail() + ' ' + mentor.getTitle()}">Prof. John Smith</option>
                         </select>
                         <small class="form-text text-muted">You can select multiple mentors</small>
                     </div>
 
                     <div class="mb-3">
                         <label for="teamMemberIds" class="form-label">Team Members</label>
-                        <select id="teamMemberIds" class="form-control select2" multiple>
+                        <select id="teamMemberIds" name="teamMemberIds" class="form-control select2" multiple>
                             <option th:each="student : ${availableStudents}"
-                                    th:value="${student.id}"
-                                    th:text="${student.firstName + ' ' + student.lastName}">Student Name</option>
+                                    th:value="${student.getIndex()}"
+                                    th:text="${student.getName() + ' ' + student.getIndex()}">Student Name</option>
                         </select>
+
                         <small class="form-text text-muted">You can select multiple team members</small>
                     </div>
 
                     <div class="mb-3">
                         <label for="repoLink" class="form-label">Repository Link</label>
-                        <input type="url" id="repoLink" class="form-control"
+                        <input type="url" id="repoLink" name="repoLink" class="form-control"
                                placeholder="GitHub/GitLab link to your project">
                     </div>
 

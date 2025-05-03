@@ -1,27 +1,30 @@
 package mk.ukim.finki.wp.repoagregator.web;
 
 import mk.ukim.finki.wp.repoagregator.model.Project;
-import mk.ukim.finki.wp.repoagregator.model.Student;
+import mk.ukim.finki.wp.repoagregator.repository.ProfessorRepository;
 import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
+import mk.ukim.finki.wp.repoagregator.repository.SubjectRepository;
 import mk.ukim.finki.wp.repoagregator.service.ProjectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
 public class ProjectController {
     private final ProjectService projectService;
     private final StudentRepository studentRepository;
+    private final SubjectRepository subjectRepository;
+    private final ProfessorRepository professorRepository;
 
-    public ProjectController(ProjectService projectService, StudentRepository studentRepository) {
+    public ProjectController(ProjectService projectService, StudentRepository studentRepository, SubjectRepository subjectRepository, ProfessorRepository professorService) {
         this.projectService = projectService;
         this.studentRepository = studentRepository;
+        this.subjectRepository = subjectRepository;
+        this.professorRepository = professorService;
     }
 
     @GetMapping("/projects")
@@ -49,13 +52,17 @@ public class ProjectController {
                 courseIds,
                 mentorIds,
                 teamMemberIds,
-                ""
+                "221058"
         );
         return "redirect:/projects";
     }
 
     @GetMapping("/projects/create")
-    public String getAdd() {
+    public String getAdd(Model model) {
+        model.addAttribute("availableCourses", subjectRepository.findAll());
+        model.addAttribute("availableMentors", professorRepository.findAll());
+        model.addAttribute("availableStudents", studentRepository.findAll());
+
         return "create-project";
     }
 }

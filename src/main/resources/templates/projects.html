@@ -93,24 +93,24 @@
     <div class="col-md-6 col-lg-4 mb-4" th:each="project : ${projects}">
       <div class="card">
         <div class="card-header bg-white">
-          <h5 class="card-title mb-0" th:text="${project.name}">Project Name</h5>
+          <h5 class="card-title mb-0" th:text="${project.getName()}">Project Name</h5>
           <div class="mt-2">
-            <span class="badge badge-year" th:text="${project.year}">2023</span>
-            <a th:if="${project.repoLink}" th:href="${project.repoLink}" target="_blank" class="badge badge-dark">
+            <span class="badge badge-year" th:text="${project.getYear()}">2023</span>
+            <a th:if="${project.getRepoUrl()}" th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-dark">
               <i class="fab fa-github mr-1"></i>Repository
             </a>
           </div>
         </div>
         <div class="card-body">
-          <p class="card-text" th:text="${project.description}">
+          <p class="card-text" th:text="${project.getShortDescription()}">
             Short description of the project goes here. This is just an example text that will be replaced by the actual project description.
           </p>
 
           <!-- Courses -->
-          <div class="mb-3" th:if="${not #lists.isEmpty(project.courses)}">
+          <div class="mb-3" th:if="${not #lists.isEmpty(project.getName())}">
             <h6 class="small text-muted mb-2">Courses:</h6>
             <div>
-              <span class="badge badge-course mr-1 mb-1" th:each="course : ${project.courses}" th:text="${course.code}">CS101</span>
+              <span class="badge badge-course mr-1 mb-1" th:each="course : ${project.getSubjects()}" th:text="${course.getName()}">CS101</span>
             </div>
           </div>
 
@@ -118,8 +118,8 @@
           <div class="mb-3" th:if="${not #lists.isEmpty(project.teamMembers)}">
             <h6 class="small text-muted mb-2">Team:</h6>
             <p class="mb-0">
-                                <span th:each="member, iterStat : ${project.teamMembers}">
-                                    <span th:text="${member.firstName + ' ' + member.lastName}">John Doe</span>
+                                <span th:each="member, iterStat : ${project.getTeamMembers()}">
+                                    <span th:text="${member.getName() + ' ' + member.getIndex()}">John Doe</span>
                                     <span th:if="${!iterStat.last}">, </span>
                                 </span>
             </p>
@@ -130,7 +130,7 @@
             <h6 class="small text-muted mb-2">Mentors:</h6>
             <div>
                                 <span class="badge badge-mentor mr-1 mb-1" th:each="mentor : ${project.mentors}"
-                                      th:text="${mentor.title + ' ' + mentor.lastName}">Prof. Smith</span>
+                                      th:text="${mentor.title + ' ' + mentor.getName()}">Prof. Smith</span>
             </div>
           </div>
         </div>
