@@ -2,8 +2,8 @@ package mk.ukim.finki.wp.repoagregator.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
-import mk.ukim.finki.konsultacii.model.Room;
-import mk.ukim.finki.konsultacii.repository.RoomRepository;
+import mk.ukim.finki.wp.repoagregator.model.Room;
+import mk.ukim.finki.wp.repoagregator.repository.RoomRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;

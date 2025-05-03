@@ -1,9 +1,9 @@
 package mk.ukim.finki.wp.repoagregator.config;
 
 import lombok.Getter;
-import mk.ukim.finki.konsultacii.model.Professor;
-import mk.ukim.finki.konsultacii.model.Student;
-import mk.ukim.finki.konsultacii.model.User;
+import mk.ukim.finki.wp.repoagregator.model.Professor;
+import mk.ukim.finki.wp.repoagregator.model.Student;
+import mk.ukim.finki.wp.repoagregator.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

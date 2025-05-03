@@ -1,13 +1,12 @@
 package mk.ukim.finki.wp.repoagregator.config;
-
-import mk.ukim.finki.konsultacii.model.Professor;
-import mk.ukim.finki.konsultacii.model.Student;
-import mk.ukim.finki.konsultacii.model.User;
-import mk.ukim.finki.konsultacii.model.enumerations.UserRole;
-import mk.ukim.finki.konsultacii.model.exceptions.InvalidUsernameException;
-import mk.ukim.finki.konsultacii.repository.StudentRepository;
-import mk.ukim.finki.konsultacii.repository.UserRepository;
-import mk.ukim.finki.konsultacii.service.ProfessorService;
+import mk.ukim.finki.wp.repoagregator.model.Professor;
+import mk.ukim.finki.wp.repoagregator.model.Student;
+import mk.ukim.finki.wp.repoagregator.model.User;
+import mk.ukim.finki.wp.repoagregator.model.enumerations.UserRole;
+import mk.ukim.finki.wp.repoagregator.model.exceptions.InvalidUsernameException;
+import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
+import mk.ukim.finki.wp.repoagregator.repository.UserRepository;
+import mk.ukim.finki.wp.repoagregator.service.ProfessorService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

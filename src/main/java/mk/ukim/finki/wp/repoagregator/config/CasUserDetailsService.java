@@ -1,8 +1,8 @@
 package mk.ukim.finki.wp.repoagregator.config;
 
-import mk.ukim.finki.konsultacii.repository.StudentRepository;
-import mk.ukim.finki.konsultacii.repository.UserRepository;
-import mk.ukim.finki.konsultacii.service.ProfessorService;
+import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
+import mk.ukim.finki.wp.repoagregator.repository.UserRepository;
+import mk.ukim.finki.wp.repoagregator.service.ProfessorService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;

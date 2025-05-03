@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile(("cas"))
 @Configuration
 @EnableWebSecurity
+
 public class CasSecurityConfig extends AuthConfig {
 
     @Autowired

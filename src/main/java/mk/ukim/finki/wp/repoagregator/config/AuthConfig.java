@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.repoagregator.config;
 
+import mk.ukim.finki.wp.repoagregator.model.enumerations.AppRole;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
