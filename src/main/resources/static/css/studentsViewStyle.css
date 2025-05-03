@@ -1,0 +1,352 @@
+body {
+    background-color: white;
+}
+
+#header {
+    height: 40px;
+    z-index: 997;
+    transition: all 0.5s;
+    background-color: rgba(22, 22, 23, 1);
+    /*box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.3);*/
+}
+
+.navigation-clean-search .container-fluid {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.navigation-clean-search .navbar-brand {
+    margin-right: auto;
+}
+
+.header img {
+    width: 100%;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 200px 0 120px 0;
+    border-radius: 0 0 20% 20%;
+    z-index: 1;
+}
+
+#consultations_ .card {
+    margin-bottom: 20px;
+    background-color: #d0c6ba;
+}
+
+#header-nav {
+    width: 100%;
+    height: 90vh;
+    position: relative;
+    background-color: black;
+    /*background-size: 120%;*/
+    /*background: url("../images/FINKI-logo-gif.gif")  no-repeat center top;*/
+    padding: 200px 0 120px 0;
+    /*border-radius: 0 0 20% 20%;*/
+    margin-bottom: 20px;
+}
+
+.navbar {
+    padding: 0;
+}
+
+.navbar ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    list-style: none;
+    align-items: center;
+}
+
+.navbar li {
+    position: relative;
+}
+
+.navbar a,
+.navbar a:focus {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 10px 30px;
+    font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    color: rgba(225, 225, 225, 0.8);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.navbar a i,
+.navbar a:focus i {
+    font-size: 12px;
+    line-height: 0;
+    margin-left: 5px;
+}
+
+.navbar a:hover,
+.navbar .active,
+.navbar .active:focus,
+.navbar li:hover > a {
+    color: #6e9cd2;
+}
+
+#username {
+    text-decoration: none;
+    /*color: hsl(26, 50%, 50%);*/
+    color: #6e9cd2;
+}
+
+.page-info {
+    position: relative;
+    z-index: 2;
+}
+
+.page-info h4 {
+    color: #ffffff;
+    font-family: "Arial", serif;
+    font-size: xx-large;
+
+}
+
+.nav-link {
+    padding: 10px 0 10px 15px !important;
+}
+
+#logo-image {
+    max-width: 35px;
+    max-height: 35px;
+}
+
+.card {
+    background-color: #d0c6ba;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgb(114, 114, 114);
+}
+
+footer {
+    background-color: #000000;
+    color: rgba(225, 225, 225, 0.8);
+    text-align: center;
+    /*padding: 5px;*/
+    /*border-radius: 20% 20% 0 0;*/
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+}
+
+/*#bodyContent {
+    min-height: 100vh;
+}*/
+
+.header-title {
+    align-content: center;
+}
+
+.consultation-logos {
+    width: 16px;
+    height: 16px;
+}
+
+.custom-button-text {
+    text-decoration: none;
+    font-family: Arial, serif;
+    text-align: center;
+}
+
+.custom-button {
+    padding: 10px 18px;
+    background-color: green;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.custom-modal-button {
+    font-size: 12px;
+    padding: 5px 14px;
+    background-color: mediumseagreen;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.custom-cancel-button {
+    font-size: 12px;
+    padding: 5px 14px;
+    background-color: #de1111;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.custom-comment-button {
+    font-size: 12px;
+    padding: 5px 14px;
+    background-color: royalblue;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.custom-modal-close-button {
+    font-size: 12px;
+    padding: 7px 16px;
+    background-color: #4b81bf;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.custom-button:hover, .custom-comment-button:hover, .custom-modal-close-button:hover {
+    /*background-color: hsl(24, 100%, 70%);*/
+    background-color: darkblue;
+}
+
+.custom-cancel-button:hover{
+    background-color: #a80f0f;
+}
+
+.custom-modal-button:hover{
+    background-color: darkgreen;
+}
+
+.custom-search {
+    background-color: rgb(18, 18, 18);
+    border: rgba(225, 225, 225, 0.8);
+    color: rgba(225, 225, 225, 0.8);
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgba(225, 225, 225, 0.8);
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: rgba(225, 225, 225, 0.8);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgba(225, 225, 225, 0.8);
+}
+
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.link-style {
+    text-decoration: none;
+    color: #6e9cd2;
+}
+
+.card-header-font {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.col-xl-3 {
+    width: 23% !important;
+}
+
+.modal-footer {
+    background: #3c6493;
+    color: white;
+}
+
+.consultation-div {
+    border-left: 2px solid #6e9cd2;
+}
+
+
+.modal {
+    position: relative;
+    z-index: 2;
+}
+
+.alert-style {
+    background-color: #537a30 !important;
+    color: white !important;
+}
+
+#alertContainer {
+    width: 100%;
+    height: 15px !important;
+    position: absolute;
+    border-radius: 0;
+    z-index: 999;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.modal-header {
+    border: none !important;
+    padding: 0 !important;
+}
+
+.modal-footer {
+    border: none !important;
+    padding: 0 !important;
+}
+
+.modal-footer button {
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.modal-body {
+    padding-top: 0 !important;
+}
+
+.consultations-type-modal {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: #6e9cd2;
+}
+
+.booking-cards{
+    float: left;
+}
+
+.card-style{
+    background-color: rgba(225, 225, 225, 0.8);
+}
+
+.modal-links{
+    font-size: 15px;
+}
+
+.logout-button {
+    background: none;
+    border: none;
+    color: rgba(225, 225, 225, 0.8);
+    text-decoration: none;
+    cursor: pointer;
+    padding: 10px 0 10px 15px !important;
+    font-size: 12px;
+    font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+}
+
+.logout-button:hover {
+    text-decoration: underline;
+}

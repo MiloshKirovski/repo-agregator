@@ -1,0 +1,14 @@
+.overline {
+    text-decoration: line-through;
+}
+.black-btn-white-text {
+    background-color: #000501 !important;
+    color: white !important;
+}
+.physical-and-online-room-btn {
+    background-color: #56CBF9 !important;
+}
+.schedule-consultation-btn {
+    background-color: #02D2AF !important;
+    color: white !important;
+}
