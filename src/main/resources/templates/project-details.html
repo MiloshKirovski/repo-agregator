@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${project.name} + ' - Project Details'">Project Details - RepoAggregator</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
-          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
     <style>
@@ -109,8 +110,12 @@
             color: #24292e;
         }
 
-        .readme-content h1, .readme-content h2, .readme-content h3,
-        .readme-content h4, .readme-content h5, .readme-content h6 {
+        .readme-content h1,
+        .readme-content h2,
+        .readme-content h3,
+        .readme-content h4,
+        .readme-content h5,
+        .readme-content h6 {
             margin-top: 1.5rem;
             margin-bottom: 1rem;
             font-weight: 600;
@@ -139,7 +144,7 @@
         }
 
         .readme-content code {
-            background-color: rgba(27,31,35,0.05);
+            background-color: rgba(27, 31, 35, 0.05);
             border-radius: 3px;
             font-size: 85%;
             margin: 0;
@@ -152,7 +157,6 @@
             display: inline;
             line-height: inherit;
             margin: 0;
-            max-width: auto;
             overflow: visible;
             padding: 0;
             word-wrap: normal;
@@ -188,7 +192,7 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background-color: rgba(255,255,255,0.9);
+            background-color: rgba(255, 255, 255, 0.9);
             border: 1px solid #dee2e6;
             border-radius: 50px;
             padding: 0.5rem 1rem;
@@ -203,7 +207,7 @@
             background-color: #fff;
             color: #007bff;
             text-decoration: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .no-data {
@@ -213,157 +217,129 @@
     </style>
 </head>
 <body class="bg-light">
-<!-- Back Button -->
-<a href="/projects" class="back-button">
-    <i class="fas fa-arrow-left mr-2"></i>Back to Projects
-</a>
+<div layout:fragment="content">
+    <!-- Content omitted for brevity, already valid above -->
+    <a href="/projects" class="back-button">
+        <i class="fas fa-arrow-left mr-2"></i>Back to Projects
+    </a>
 
-<!-- Project Header -->
-<div class="project-header">
-    <div class="container">
-        <h1 class="project-title" th:text="${project.name}">Project Name</h1>
-        <div class="project-meta">
-            <span class="badge badge-custom badge-year" th:text="${project.year}">2023</span>
-            <a th:if="${project.repoUrl}"
-               th:href="${project.repoUrl}"
-               target="_blank"
-               class="badge badge-custom badge-repo">
-                <i class="fab fa-github mr-2"></i>View Repository
-            </a>
-        </div>
-    </div>
-</div>
-
-<div class="container pb-5">
-    <!-- Project Description -->
-    <div class="card section-card">
-        <div class="section-header">
-            <h3><i class="fas fa-info-circle mr-2"></i>Project Description</h3>
-        </div>
-        <div class="section-body">
-            <p th:text="${project.shortDescription}" class="mb-0">
-                This is the detailed description of the project. It provides comprehensive information about what the project does, its goals, and its significance.
-            </p>
-            <p th:if="${#strings.isEmpty(project.shortDescription)}" class="no-data mb-0">
-                No description available for this project.
-            </p>
+    <!-- Project Header -->
+    <div class="project-header">
+        <div class="container">
+            <h1 class="project-title" th:text="${project.name}">Project Name</h1>
+            <div class="project-meta">
+                <span class="badge badge-custom badge-year" th:text="${project.year}">2023</span>
+                <a th:if="${project.repoUrl}"
+                   th:href="${project.repoUrl}"
+                   target="_blank"
+                   class="badge badge-custom badge-repo">
+                    <i class="fab fa-github mr-2"></i>View Repository
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- Team Members -->
-    <div class="card section-card">
-        <div class="section-header">
-            <h3><i class="fas fa-users mr-2"></i>Team Members</h3>
+    <div class="container pb-5">
+        <!-- Project Description -->
+        <div class="card section-card">
+            <div class="section-header">
+                <h3><i class="fas fa-info-circle mr-2"></i>Project Description</h3>
+            </div>
+            <div class="section-body">
+                <p th:text="${project.shortDescription}" class="mb-0">
+                    This is the detailed description of the project. It provides comprehensive information about what the project does, its goals, and its significance.
+                </p>
+                <p th:if="${#strings.isEmpty(project.shortDescription)}" class="no-data mb-0">
+                    No description available for this project.
+                </p>
+            </div>
         </div>
-        <div class="section-body">
-            <div th:if="${not #lists.isEmpty(project.teamMembers)}">
+
+        <!-- Team Members -->
+        <div class="card section-card">
+            <div class="section-header">
+                <h3><i class="fas fa-users mr-2"></i>Team Members</h3>
+            </div>
+            <div class="section-body">
+                <div th:if="${not #lists.isEmpty(project.teamMembers)}">
           <span class="team-member" th:each="member : ${project.teamMembers}"
                 th:text="${member.name + ' (' + member.index + ')'}">
             John Doe (123456)
           </span>
+                </div>
+                <p th:if="${#lists.isEmpty(project.teamMembers)}" class="no-data mb-0">
+                    No team members listed for this project.
+                </p>
             </div>
-            <p th:if="${#lists.isEmpty(project.teamMembers)}" class="no-data mb-0">
-                No team members listed for this project.
-            </p>
         </div>
-    </div>
 
-    <!-- Mentors -->
-    <div class="card section-card">
-        <div class="section-header">
-            <h3><i class="fas fa-chalkboard-teacher mr-2"></i>Mentors</h3>
-        </div>
-        <div class="section-body">
-            <div th:if="${not #lists.isEmpty(project.mentors)}">
+        <!-- Mentors -->
+        <div class="card section-card">
+            <div class="section-header">
+                <h3><i class="fas fa-chalkboard-teacher mr-2"></i>Mentors</h3>
+            </div>
+            <div class="section-body">
+                <div th:if="${not #lists.isEmpty(project.mentors)}">
           <span class="mentor-item" th:each="mentor : ${project.mentors}"
                 th:text="${mentor.title + ' ' + mentor.name}">
             Prof. Jane Smith
           </span>
+                </div>
+                <p th:if="${#lists.isEmpty(project.mentors)}" class="no-data mb-0">
+                    No mentors assigned to this project.
+                </p>
             </div>
-            <p th:if="${#lists.isEmpty(project.mentors)}" class="no-data mb-0">
-                No mentors assigned to this project.
-            </p>
         </div>
-    </div>
 
-    <!-- Courses -->
-    <div class="card section-card">
-        <div class="section-header">
-            <h3><i class="fas fa-book mr-2"></i>Associated Courses</h3>
-        </div>
-        <div class="section-body">
-            <div th:if="${not #lists.isEmpty(project.subjects)}">
+        <!-- Courses -->
+        <div class="card section-card">
+            <div class="section-header">
+                <h3><i class="fas fa-book mr-2"></i>Associated Courses</h3>
+            </div>
+            <div class="section-body">
+                <div th:if="${not #lists.isEmpty(project.subjects)}">
           <span class="course-badge" th:each="course : ${project.subjects}"
                 th:text="${course.name}">
             CS101 - Introduction to Computer Science
           </span>
-            </div>
-            <p th:if="${#lists.isEmpty(project.subjects)}" class="no-data mb-0">
-                No courses associated with this project.
-            </p>
-        </div>
-    </div>
-
-    <!-- README Content -->
-    <div class="card section-card">
-        <div class="section-header">
-            <h3><i class="fab fa-github mr-2"></i>README Documentation</h3>
-        </div>
-        <div class="section-body">
-            <div th:if="${readme != null and !#strings.contains(readme, 'README not found')}"
-                 class="readme-content"
-                 th:utext="${#strings.replace(#strings.escapeXml(readme), '&#10;', '<br/>')}">
-                <!-- README content will be rendered here -->
-            </div>
-            <div th:if="${readme == null or #strings.contains(readme, 'README not found')}"
-                 class="text-center py-4">
-                <i class="fab fa-github fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">README Not Available</h5>
-                <p class="text-muted mb-0">
-                    The README file could not be loaded from the repository, or no repository is linked to this project.
+                </div>
+                <p th:if="${#lists.isEmpty(project.subjects)}" class="no-data mb-0">
+                    No courses associated with this project.
                 </p>
             </div>
         </div>
-    </div>
-</div>
 
+        <!-- README Content -->
+        <div class="card section-card">
+            <div class="section-header">
+                <h3><i class="fab fa-github mr-2"></i>README Documentation</h3>
+            </div>
+            <div class="section-body">
+                <div th:if="${readme != null and !#strings.contains(readme, 'README not found')}"
+                     class="readme-content"
+                     th:utext="${#strings.replace(#strings.escapeXml(readme), '&#10;', '<br/>')}">
+                    <!-- README content will be rendered here -->
+                </div>
+                <div th:if="${readme == null or #strings.contains(readme, 'README not found')}"
+                     class="text-center py-4">
+                    <i class="fab fa-github fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">README Not Available</h5>
+                    <p class="text-muted mb-0">
+                        The README file could not be loaded from the repository, or no repository is linked to this project.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript dependencies -->
+
+</div>
 <!-- JavaScript dependencies -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
 
-<script>
-    // Process README content to render markdown-like formatting
-    document.addEventListener('DOMContentLoaded', function() {
-        const readmeContent = document.querySelector('.readme-content');
-        if (readmeContent && readmeContent.innerHTML.trim() !== '') {
-            // Convert simple markdown patterns to HTML
-            let content = readmeContent.innerHTML;
-
-            // Convert headers
-            content = content.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-            content = content.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-            content = content.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-
-            // Convert bold and italic
-            content = content.replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>');
-            content = content.replace(/\*(.*?)\*/gim, '<em>$1</em>');
-
-            // Convert code blocks
-            content = content.replace(/```([\s\S]*?)```/gim, '<pre><code>$1</code></pre>');
-            content = content.replace(/`([^`]*)`/gim, '<code>$1</code>');
-
-            // Convert links
-            content = content.replace(/\[([^\]]*)\]\(([^\)]*)\)/gim, '<a href="$2" target="_blank">$1</a>');
-
-            // Convert line breaks
-            content = content.replace(/\n/g, '<br>');
-
-            readmeContent.innerHTML = content;
-        }
-    });
-</script>
 </body>
 </html>
