@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import mk.ukim.finki.wp.repoagregator.model.*;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.ProjectStatus;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.RepositoryType;
+import mk.ukim.finki.wp.repoagregator.model.exceptions.ProjectNotFoundException;
 import mk.ukim.finki.wp.repoagregator.repository.*;
 import mk.ukim.finki.wp.repoagregator.service.ProjectService;
 import org.springframework.stereotype.Service;
@@ -93,5 +94,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> findAll() {
         return projectRepository.findAll();
+    }
+
+    @Override
+    public Project findById(Long id) {
+        return projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
     }
 }

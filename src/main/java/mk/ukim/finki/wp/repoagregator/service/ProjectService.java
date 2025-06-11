@@ -21,4 +21,5 @@ public interface ProjectService {
 
     void rejectProject(Long projectId, String professorId, String comment);
     List<Project> findAll();
+    Project findById(Long id);
 }

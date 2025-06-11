@@ -4,10 +4,12 @@ import mk.ukim.finki.wp.repoagregator.model.Project;
 import mk.ukim.finki.wp.repoagregator.repository.ProfessorRepository;
 import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
 import mk.ukim.finki.wp.repoagregator.repository.SubjectRepository;
+import mk.ukim.finki.wp.repoagregator.service.GithubService;
 import mk.ukim.finki.wp.repoagregator.service.ProjectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,12 +21,14 @@ public class ProjectController {
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
     private final ProfessorRepository professorRepository;
+    private final GithubService githubService;
 
-    public ProjectController(ProjectService projectService, StudentRepository studentRepository, SubjectRepository subjectRepository, ProfessorRepository professorService) {
+    public ProjectController(ProjectService projectService, StudentRepository studentRepository, SubjectRepository subjectRepository, ProfessorRepository professorService, GithubService githubService) {
         this.projectService = projectService;
         this.studentRepository = studentRepository;
         this.subjectRepository = subjectRepository;
         this.professorRepository = professorService;
+        this.githubService = githubService;
     }
 
     @GetMapping("/projects")
@@ -64,5 +68,17 @@ public class ProjectController {
         model.addAttribute("availableStudents", studentRepository.findAll());
 
         return "create-project";
+    }
+
+    @GetMapping("/projects/{id}")
+    public String viewProjectDetails(@PathVariable Long id, Model model) {
+        Project project = projectService.findById(id);
+        System.out.println(project.getName());
+        String readmeContent = githubService.fetchReadmeContent(project.getRepoUrl());
+        System.out.println(readmeContent);
+        model.addAttribute("project", project);
+        model.addAttribute("readme", readmeContent);
+
+        return "project-details";  // your Thymeleaf/HTML view name
     }
 }
