@@ -5,6 +5,7 @@ import mk.ukim.finki.wp.repoagregator.model.Professor;
 import mk.ukim.finki.wp.repoagregator.model.Project;
 import mk.ukim.finki.wp.repoagregator.model.Student;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.ProjectStatus;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -29,4 +30,5 @@ public interface ProjectService {
     List<Project> findAllByStudent(Student student);
     List<Project> findAllByMentor(String mentorId);
     Project update(Long projectId, ProjectStatus projectStatus, ApprovalComment approvalComment);
+    Page<Project> findPage(String search, String course, Integer year, Integer pageNum, Integer pageSize);
 }

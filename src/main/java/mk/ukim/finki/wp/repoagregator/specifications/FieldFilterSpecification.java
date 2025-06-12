@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.repoagregator.specifications;
 
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,29 +15,7 @@ public class FieldFilterSpecification {
                 value == null ? null : criteriaBuilder.equal(root.get(attribute), value);
     }
 
-    public static <T> Specification<T> filterEquals(Class<T> clazz, String field, String value) {
-        if (value == null || value.isEmpty()) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(fieldToPath(field, root), value);
-    }
 
-    public static <T, V> Specification<T> filterEqualsV(Class<T> clazz, String field, V value) {
-        if (value == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(fieldToPath(field, root), value);
-    }
-
-    public static <T, V extends Comparable> Specification<T> greaterThan(Class<T> clazz, String field, V value) {
-        if (value == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.greaterThan(fieldToPath(field, root), value);
-    }
 
     public static <T, V extends Comparable> Specification<T> greaterThanOrEqualTo(Class<T> clazz, String field, V value) {
         if (value == null) {
@@ -47,25 +26,6 @@ public class FieldFilterSpecification {
     }
 
 
-    public static <T> Specification<T> filterEquals(Class<T> clazz, String field, Long value) {
-        if (value == null) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(fieldToPath(field, root), value);
-    }
-
-
-    public static <T> Specification<T> filterContainsText(Class<T> clazz, String field, String value) {
-        if (value == null || value.isEmpty()) {
-            return null;
-        }
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(
-                        criteriaBuilder.lower(fieldToPath(field, root)),
-                        "%" + value.toLowerCase() + "%"
-                );
-    }
 
     private static <T> Path fieldToPath(String field, Root<T> root) {
         String[] parts = field.split("\\.");
@@ -107,6 +67,85 @@ public class FieldFilterSpecification {
                             criteriaBuilder.lessThan(fieldToPath(timeField, root), now)
                     )
             );
+        };
+    }
+
+    public static <T> Specification<T> filterEquals(Class<T> clazz, String field, String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> {
+            Path<String> fieldPath = getFieldPath(field, root);
+            return criteriaBuilder.equal(fieldPath, value);
+        };
+    }
+
+    public static <T, V> Specification<T> filterEqualsV(Class<T> clazz, String field, V value) {
+        if (value == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> {
+            Path<V> fieldPath = getFieldPath(field, root);
+            return criteriaBuilder.equal(fieldPath, value);
+        };
+    }
+
+    public static <T, V extends Comparable<? super V>> Specification<T> greaterThan(Class<T> clazz, String field, V value) {
+        if (value == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> {
+            Path<V> fieldPath = getFieldPath(field, root);
+            return criteriaBuilder.greaterThan(fieldPath, value);
+        };
+    }
+
+    public static <T> Specification<T> filterEquals(Class<T> clazz, String field, Long value) {
+        if (value == null) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> {
+            Path<Long> fieldPath = getFieldPath(field, root);
+            return criteriaBuilder.equal(fieldPath, value);
+        };
+    }
+
+    public static <T> Specification<T> filterContainsText(Class<T> clazz, String field, String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) -> {
+            Path<String> fieldPath = getFieldPath(field, root);
+            return criteriaBuilder.like(
+                    criteriaBuilder.lower(fieldPath),
+                    "%" + value.toLowerCase() + "%"
+            );
+        };
+    }
+
+    // Generic method that returns the correct Path type
+    @SuppressWarnings("unchecked")
+    private static <T, R> Path<R> getFieldPath(String field, Root<T> root) {
+        String[] parts = field.split("\\.");
+        Path<?> res = root;
+        for (String p : parts) {
+            res = res.get(p);
+        }
+        return (Path<R>) res;
+    }
+
+    public static <T> Specification<T> filterEqualsInCollection(String field, Object value) {
+        if (value == null || (value instanceof String && ((String) value).isEmpty())) {
+            return null;
+        }
+
+        return (root, query, criteriaBuilder) -> {
+            String[] parts = field.split("\\.");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Field format must be 'collection.field'");
+            }
+            Join<T, ?> join = root.join(parts[0]);
+            return criteriaBuilder.equal(join.get(parts[1]), value);
         };
     }
 

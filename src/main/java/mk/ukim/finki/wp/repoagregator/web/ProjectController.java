@@ -9,6 +9,7 @@ import mk.ukim.finki.wp.repoagregator.repository.ProfessorRepository;
 import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
 import mk.ukim.finki.wp.repoagregator.repository.SubjectRepository;
 import mk.ukim.finki.wp.repoagregator.service.*;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,13 +47,24 @@ public class ProjectController {
         this.approvalCommentService = approvalCommentService;
     }
 
-    @GetMapping(value = {"/projects", "/"})
-    public String getProjects(Model model) {
-        List<Project> projects = projectService.findAllApproved();
-        model.addAttribute("projects", projects);
+    @GetMapping("/projects")
+    public String getProjects(@RequestParam(required = false) String search,
+                              @RequestParam(required = false) String course,
+                              @RequestParam(required = false) Integer year,
+                              @RequestParam(defaultValue = "1") Integer pageNum,
+                              @RequestParam(defaultValue = "5") Integer results,
+                              Model model) {
+        System.out.println("XXX: " + search + " " + year);
+        Page<Project> page = this.projectService.findPage(search, course, year, pageNum, results);
+        model.addAttribute("page", page);
+        model.addAttribute("allCourses", subjectRepository.findAll());
+        model.addAttribute("year", year);
+        model.addAttribute("search", search);
+        model.addAttribute("course", course); // Add this line
+        model.addAttribute("selectedCourse", course); // Add this line for template compatibility
         model.addAttribute("repositoryTypeGithub", RepositoryType.GITHUB);
         model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
-        model.addAttribute("username",  SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
         return "projects";
     }
 

@@ -8,6 +8,10 @@ import mk.ukim.finki.wp.repoagregator.model.enumerations.RepositoryType;
 import mk.ukim.finki.wp.repoagregator.model.exceptions.ProjectNotFoundException;
 import mk.ukim.finki.wp.repoagregator.repository.*;
 import mk.ukim.finki.wp.repoagregator.service.ProjectService;
+import mk.ukim.finki.wp.repoagregator.specifications.FieldFilterSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -133,5 +137,61 @@ public class ProjectServiceImpl implements ProjectService {
         projectMain.setApprovalComment(approvalComment);
         return projectRepository.save(projectMain);
     }
+
+    @Override
+    public Page<Project> findPage(String search, String course, Integer year, Integer pageNum, Integer pageSize) {
+        System.out.println("=== DEBUGGING FILTERS ===");
+        System.out.println("Search: '" + search + "' (length: " + (search != null ? search.length() : "null") + ")");
+        System.out.println("Course: '" + course + "'");
+        System.out.println("Year: " + year);
+
+        // Create specifications
+        Specification<Project> searchSpec = FieldFilterSpecification.filterContainsText(Project.class, "name", search);
+        Specification<Project> courseSpec = FieldFilterSpecification.filterEqualsInCollection("subjects.id", course);
+        Specification<Project> yearSpec = FieldFilterSpecification.filterEqualsV(Project.class, "year", year);
+        Specification<Project> projectStatus = FieldFilterSpecification.filterEqualsV(Project.class, "projectStatus", ProjectStatus.APPROVED);
+
+        System.out.println("Search spec created: " + (searchSpec != null));
+        System.out.println("Course spec created: " + (courseSpec != null));
+        System.out.println("Year spec created: " + (yearSpec != null));
+
+        // Test search filter alone first
+        if (searchSpec != null) {
+            try {
+                Page<Project> searchResults = this.projectRepository.findAll(
+                        searchSpec,
+                        PageRequest.of(pageNum - 1, pageSize)
+                );
+                System.out.println("Search-only results: " + searchResults.getTotalElements());
+            } catch (Exception e) {
+                System.out.println("Error with search filter: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        // Combine all specifications
+        Specification<Project> specification = Specification
+                .where(searchSpec)
+                .and(courseSpec)
+                .and(yearSpec)
+                .and(projectStatus);
+
+
+        try {
+            Page<Project> finalResults = this.projectRepository.findAll(
+                    specification,
+                    PageRequest.of(pageNum - 1, pageSize)
+            );
+            System.out.println("Final combined results: " + finalResults.getTotalElements());
+            System.out.println("=== END DEBUG ===");
+            return finalResults;
+        } catch (Exception e) {
+            System.out.println("Error with combined specification: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println("=== END DEBUG ===");
+            throw e;
+        }
+    }
+
 
 }
