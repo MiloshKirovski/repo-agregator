@@ -7,6 +7,5 @@ import java.util.Optional;
 
 
 public interface StudentRepository extends JpaSpecificationRepository<Student, String> {
-
     Optional<Student> findByEmail(String email);
 }

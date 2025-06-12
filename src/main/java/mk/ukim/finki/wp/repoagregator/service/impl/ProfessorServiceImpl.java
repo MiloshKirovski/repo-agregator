@@ -71,4 +71,8 @@ public class ProfessorServiceImpl implements ProfessorService {
         });
         return professorsMap;
     }
+
+    public List<Professor> findAll() {
+        return professorRepository.findAll();
+    }
 }

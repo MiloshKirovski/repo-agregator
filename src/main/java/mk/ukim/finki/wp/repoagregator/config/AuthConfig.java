@@ -17,7 +17,7 @@ public class AuthConfig {
                         .requestMatchers("/display/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/consultations").hasAnyAuthority(
                                 AppRole.STUDENT.name(), AppRole.ADMIN.name(), AppRole.PROFESSOR.name())
-                        .requestMatchers("/auth/*", "/", "", "/display/*", "/css/*", "/js/*", "/images/*").permitAll()
+                        .requestMatchers("/auth/*", "/", "", "/display/*", "/css/*", "/js/*", "/images/*", "/login", "/logout").permitAll()
                         .requestMatchers("/studentAttendances/**").hasRole(AppRole.STUDENT.name())
                         .requestMatchers("/professorAttendances/**").hasAnyRole(AppRole.PROFESSOR.name(), AppRole.ADMIN.name())
                         .requestMatchers("/adminAttendances/**").hasRole(AppRole.ADMIN.name())

@@ -50,7 +50,7 @@
                                 </th:block>
                                 <th:block th:if="${#authentication.getPrincipal() == 'anonymousUser'}">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="/consultations">Најави се</a>
+                                        <a class="nav-link" href="/login">Најави се</a>
                                     </li>
                                 </th:block>
                                 <th:block sec:authorize="isAuthenticated()">
@@ -58,9 +58,18 @@
                                         <a class="nav-link " href="/projects">Проекти</a>
                                     </li>
                                 </th:block>
-                                <th:block sec:authorize="hasAnyRole('ROLE_PROFESSOR', 'ROLE_ADMIN')">
+                                <th:block sec:authorize="hasAnyRole('ROLE_PROFESSOR', 'ROLE_ADMIN', 'ROLE_STUDENT')">
                                     <li class="nav-item">
-                                        <a class="nav-link " th:href="@{/manage-consultations/{username}(username=${username})}">Мои Проекти</a>
+                                        <a class="nav-link" th:href="@{/user/{username}(username=${username})}">Мои Проекти</a>
+                                    </li>
+                                </th:block>
+                                <th:block sec:authorize="isAuthenticated()">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#" onclick="document.getElementById('logout-form').submit(); return false;">
+                                            Одјави се
+                                        </a>
+                                        <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;">
+                                        </form>
                                     </li>
                                 </th:block>
                             </ul>

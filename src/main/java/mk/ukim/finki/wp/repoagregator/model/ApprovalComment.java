@@ -20,6 +20,8 @@ public class ApprovalComment {
     @ManyToOne
     private Professor reviewer;
 
+    public ApprovalComment() {}
+
     public ApprovalComment(String comment, boolean approved, Project project, Professor reviewer) {
         this.comment = comment;
         this.approved = approved;

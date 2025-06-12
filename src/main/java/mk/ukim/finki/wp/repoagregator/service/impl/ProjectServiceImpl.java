@@ -11,6 +11,7 @@ import mk.ukim.finki.wp.repoagregator.service.ProjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -108,4 +109,29 @@ public class ProjectServiceImpl implements ProjectService {
     public Project findById(Long id) {
         return projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
     }
+
+    public List<Project> findAllApproved() {
+        return projectRepository.findAll().stream().filter(p -> p.getProjectStatus() == ProjectStatus.APPROVED).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Project> findAllByStudent(Student student) {
+        return projectRepository.findAllByCreatedBy(student);
+    }
+
+    @Override
+    public List<Project> findAllByMentor(String mentorId) {
+        Professor professor = professorRepository.findByid(mentorId).orElseThrow(RuntimeException::new);
+        System.out.println(professor.getId());
+        return projectRepository.findAllByMentorsContaining(professor);
+    }
+
+    @Override
+    public Project update(Long projectId, ProjectStatus projectStatus, ApprovalComment approvalComment) {
+        Project projectMain =  projectRepository.findById(projectId).orElseThrow(RuntimeException::new);
+        projectMain.setProjectStatus(projectStatus);
+        projectMain.setApprovalComment(approvalComment);
+        return projectRepository.save(projectMain);
+    }
+
 }
