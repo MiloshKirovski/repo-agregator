@@ -171,6 +171,9 @@ public class ProjectController {
         }else if (project.getPlatform().equals(RepositoryType.GITLAB)) {
             readmeContent = gitLabService.fetchReadmeContent(project.getRepoUrl());
         }
+       ApprovalComment comment = approvalCommentService.findByProject(project);
+
+        model.addAttribute("comment", comment);
         model.addAttribute("project", project);
         model.addAttribute("readme", readmeContent);
 
