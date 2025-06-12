@@ -49,7 +49,15 @@ public class ProjectServiceImpl implements ProjectService {
         Student creator = studentRepository.findById(createdByStudentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        Project project = new Project(name, description, repoUrl, ProjectStatus.PENDING, RepositoryType.GITHUB, null, year, teamMembers, mentors, subjects, creator);
+        RepositoryType repoType ;
+        if (repoUrl != null && repoUrl.contains("gitlab")) {
+            repoType=RepositoryType.GITLAB;
+        }else{
+            repoType=RepositoryType.GITHUB;
+
+        }
+
+        Project project = new Project(name, description, repoUrl, ProjectStatus.PENDING, repoType, null, year, teamMembers, mentors, subjects, creator);
         return projectRepository.save(project);
     }
 

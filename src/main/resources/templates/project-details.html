@@ -229,11 +229,20 @@
             <h1 class="project-title" th:text="${project.name}">Project Name</h1>
             <div class="project-meta">
                 <span class="badge badge-custom badge-year" th:text="${project.year}">2023</span>
-                <a th:if="${project.repoUrl}"
-                   th:href="${project.repoUrl}"
-                   target="_blank"
-                   class="badge badge-custom badge-repo">
-                    <i class="fab fa-github mr-2"></i>View Repository
+<!--                <a th:if="${project.repoUrl}"-->
+<!--                   th:href="${project.repoUrl}"-->
+<!--                   target="_blank"-->
+<!--                   class="badge badge-custom badge-repo">-->
+<!--                    <i class="fab fa-github mr-2"></i>View Repository-->
+<!--                </a>-->
+
+                <a th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGithub}"
+                   th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-custom badge-repo">
+                    <i class="fab fa-github mr-2"></i>Repository
+                </a>
+                <a th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGitlab}"
+                   th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-custom badge-repo">
+                    <i class="fab fa-gitlab mr-2"></i>Repository
                 </a>
             </div>
         </div>
@@ -312,7 +321,9 @@
         <!-- README Content -->
         <div class="card section-card">
             <div class="section-header">
-                <h3><i class="fab fa-github mr-2"></i>README Documentation</h3>
+                <h3 th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGithub}"><i class="fab fa-github mr-2"></i>README Documentation</h3>
+                <h3 th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGitlab}"><i class="fab fa-gitlab mr-2"></i>README Documentation</h3>
+
             </div>
             <div class="section-body">
                 <div th:if="${readme != null and !#strings.contains(readme, 'README not found')}"

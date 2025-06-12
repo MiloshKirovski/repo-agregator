@@ -1,9 +1,11 @@
 package mk.ukim.finki.wp.repoagregator.web;
 
 import mk.ukim.finki.wp.repoagregator.model.Project;
+import mk.ukim.finki.wp.repoagregator.model.enumerations.RepositoryType;
 import mk.ukim.finki.wp.repoagregator.repository.ProfessorRepository;
 import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
 import mk.ukim.finki.wp.repoagregator.repository.SubjectRepository;
+import mk.ukim.finki.wp.repoagregator.service.GitLabService;
 import mk.ukim.finki.wp.repoagregator.service.GithubService;
 import mk.ukim.finki.wp.repoagregator.service.ProjectService;
 import org.springframework.stereotype.Controller;
@@ -22,19 +24,23 @@ public class ProjectController {
     private final SubjectRepository subjectRepository;
     private final ProfessorRepository professorRepository;
     private final GithubService githubService;
+    private final GitLabService gitLabService;
 
-    public ProjectController(ProjectService projectService, StudentRepository studentRepository, SubjectRepository subjectRepository, ProfessorRepository professorService, GithubService githubService) {
+    public ProjectController(ProjectService projectService, StudentRepository studentRepository, SubjectRepository subjectRepository, ProfessorRepository professorService, GithubService githubService, GitLabService gitLabService) {
         this.projectService = projectService;
         this.studentRepository = studentRepository;
         this.subjectRepository = subjectRepository;
         this.professorRepository = professorService;
         this.githubService = githubService;
+        this.gitLabService = gitLabService;
     }
 
     @GetMapping("/projects")
     public String getProjects(Model model) {
         List<Project> projects = projectService.findAll();
         model.addAttribute("projects", projects);
+        model.addAttribute("repositoryTypeGithub", RepositoryType.GITHUB);
+        model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
         return "projects";
     }
 
@@ -56,7 +62,7 @@ public class ProjectController {
                 courseIds,
                 mentorIds,
                 teamMemberIds,
-                "221058"
+                "221071"
         );
         return "redirect:/projects";
     }
@@ -74,10 +80,21 @@ public class ProjectController {
     public String viewProjectDetails(@PathVariable Long id, Model model) {
         Project project = projectService.findById(id);
         System.out.println(project.getName());
-        String readmeContent = githubService.fetchReadmeContent(project.getRepoUrl());
+        String readmeContent="";
+        if (project.getPlatform().equals(RepositoryType.GITHUB)) {
+            System.out.println("THE PROJECT IS A GITHUB");
+            readmeContent = githubService.fetchReadmeContent(project.getRepoUrl());
+
+        }else if (project.getPlatform().equals(RepositoryType.GITLAB)) {
+            System.out.println("THE PROJECT IS A GITLAB");
+            readmeContent = gitLabService.fetchReadmeContent(project.getRepoUrl());
+        }
         System.out.println(readmeContent);
         model.addAttribute("project", project);
         model.addAttribute("readme", readmeContent);
+
+        model.addAttribute("repositoryTypeGithub", RepositoryType.GITHUB);
+        model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
 
         return "project-details";  // your Thymeleaf/HTML view name
     }

@@ -346,8 +346,13 @@
                     <h5 class="card-title mb-2" th:text="${project.getName()}">Project Name</h5>
                     <div class="card-badges mb-3">
                       <span class="badge badge-year" th:text="${project.getYear()}">2023</span>
-                      <a th:if="${project.getRepoUrl()}" th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-dark">
+                      <a th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGithub}"
+                         th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-dark">
                         <i class="fab fa-github me-1"></i>Repository
+                      </a>
+                      <a th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGitlab}"
+                         th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-dark">
+                        <i class="fab fa-gitlab me-1"></i>Repository
                       </a>
                     </div>
                   </div>
