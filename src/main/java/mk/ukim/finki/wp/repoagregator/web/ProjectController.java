@@ -47,7 +47,7 @@ public class ProjectController {
         this.approvalCommentService = approvalCommentService;
     }
 
-    @GetMapping("/projects")
+    @GetMapping(value = {"/", "/projects"})
     public String getProjects(@RequestParam(required = false) String search,
                               @RequestParam(required = false) String course,
                               @RequestParam(required = false) Integer year,
@@ -130,7 +130,7 @@ public class ProjectController {
         model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
         model.addAttribute("isProfessor", isProfessor);
 
-        return "my-projects-no-filter";
+        return "my-projects";
     }
 
     @PostMapping("/projects/{id}/update-status")
@@ -162,7 +162,7 @@ public class ProjectController {
     }
 
     @GetMapping("/projects/{id}")
-    public String viewProjectDetails(@PathVariable Long id, Model model) {
+    public String viewProjectDetails(@PathVariable Long id, Model model, @RequestParam(required = false) String fromMyProjects) {
         Project project = projectService.findById(id);
         String readmeContent="";
         if (project.getPlatform().equals(RepositoryType.GITHUB)) {
@@ -171,9 +171,15 @@ public class ProjectController {
         }else if (project.getPlatform().equals(RepositoryType.GITLAB)) {
             readmeContent = gitLabService.fetchReadmeContent(project.getRepoUrl());
         }
-       ApprovalComment comment = approvalCommentService.findByProject(project);
+        if(fromMyProjects != null) {
+            ApprovalComment comment = approvalCommentService.findByProject(project);
+            model.addAttribute("comment", comment);
 
-        model.addAttribute("comment", comment);
+        } else {
+            ApprovalComment comment = new ApprovalComment("", false, null,null);
+            model.addAttribute("comment", comment);
+        }
+
         model.addAttribute("project", project);
         model.addAttribute("readme", readmeContent);
 

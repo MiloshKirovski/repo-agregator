@@ -4,106 +4,434 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RepoAggregator</title>
+    <title>RepoAggregator - Креирај Проект</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #5789bc 0%, #3e2c60 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #5789bc 0%, #3e2c60 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
         .form-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            position: relative;
         }
-        .select2-container {
-            width: 100% !important;
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: white;
         }
+
+        .project-header h1 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+        .form-header h3 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            font-weight: 700;
+            font-size: 2.2rem;
+        }
+        .intro{
+            color: #718096;
+            margin: 0.5rem 0 0 0;
+            font-size: 1.1rem;
+        }
+
+        .form-body {
+            padding: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label i {
+            margin-right: 0.5rem;
+            color: #667eea;
+            width: 16px;
+            text-align: center;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            padding: 0.9rem 1.2rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            background: white;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-text {
+            color: #a0aec0;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-text i {
+            margin-right: 0.3rem;
+            color: #cbd5e0;
+        }
+
+        .select2-container--default .select2-selection--multiple {
+            border: 2px solid #e2e8f0 !important;
+            border-radius: 12px !important;
+            padding: 0.4rem 0.8rem !important;
+            min-height: 50px !important;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1) !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background: var(--primary-gradient) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            color: white !important;
+            padding: 0.3rem 0.6rem !important;
+            margin: 0.2rem !important;
+            font-size: 0.85rem !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: white !important;
+            margin-right: 0.3rem !important;
+        }
+
+        .form-actions {
+            padding: 2rem 2.5rem 2.5rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(46, 74, 196, 0.02) 100%);
+            border-top: 1px solid rgba(102, 126, 234, 0.1);
+            text-align: center;
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin: 0 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border: none;
+            color: #4a5568;
+            box-shadow: 0 4px 15px rgba(203, 213, 224, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(203, 213, 224, 0.4);
+            color: #2d3748;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .input-group-text {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px solid #e2e8f0;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 1rem;
+                border-radius: 16px;
+            }
+
+            .form-body {
+                padding: 1.5rem;
+            }
+
+            .form-actions {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-row .form-group {
+                margin-bottom: 2rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 0.3rem 0;
+                justify-content: center;
+            }
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+
     </style>
 </head>
-<body class="bg-light">
+<body>
 <div layout:fragment="content">
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-12">
-            <div class="form-container bg-white p-4 shadow-sm rounded">
-                <h3 class="display-4 mb-4 text-center">Create New Project</h3>
-                <form th:action="@{/projects/create}" method="post" th:object="${projectForm}">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="name" class="form-label">Project Name</label>
+    <div class="container py-5">
+        <div class="project-header d-flex flex-column">
+            <h1 class="display-4">Креирај Нов Проект</h1>
+            <p class="intro">Пополнете ги деталите за вашиот проект</p>
+        </div>
+        <div class="form-container">
+            <form th:action="@{/projects/create}" method="post" th:object="${projectForm}">
+                <div class="form-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-project-diagram"></i>
+                                Име на проект
+                            </label>
                             <input type="text" id="name" name="name" class="form-control" required
-                                   placeholder="Enter project name">
+                                   placeholder="Внесете име на проект">
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="year" class="form-label">Year</label>
+                        <div class="form-group">
+                            <label for="year" class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Година
+                            </label>
                             <input type="number" id="year" name="year" class="form-control" required
-                                   placeholder="Year of the project" min="2000" max="2030">
+                                   placeholder="2024" min="2000" max="2030">
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Short Description</label>
-                        <textarea id="description" name="description" class="form-control" rows="3"
-                                  placeholder="Brief description of your project"></textarea>
+                    <div class="form-group">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Краток опис
+                        </label>
+                        <textarea id="description" name="description" class="form-control" rows="4"
+                                  placeholder="Опишете го вашиот проект во неколку реченици..."></textarea>
+                        <small class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Краток и јасен опис за целта и функционалноста на проектот
+                        </small>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="courseIds" class="form-label">Related Courses</label>
+                    <div class="form-group">
+                        <label for="courseIds" class="form-label">
+                            <i class="fas fa-book"></i>
+                            Предмет/и
+                        </label>
                         <select id="courseIds" name="courseIds" class="form-control select2" multiple>
                             <option th:each="course : ${availableCourses}"
                                     th:value="${course.id}"
                                     th:text="${course.name}">CS101 - Course Name</option>
                         </select>
-                        <small class="form-text text-muted">You can select multiple courses</small>
+                        <small class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Можете да одберете повеќе предмети за кои се однесува проектот
+                        </small>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="mentorIds" class="form-label">Project Mentors</label>
+                    <div class="form-group">
+                        <label for="mentorIds" class="form-label">
+                            <i class="fas fa-graduation-cap"></i>
+                            Ментор/и
+                        </label>
                         <select id="mentorIds" name="mentorIds" class="form-control select2" multiple>
                             <option th:each="mentor : ${availableMentors}"
                                     th:value="${mentor.id}"
-                                    th:text="${mentor.name + ' ' + mentor.getEmail() + ' ' + mentor.getTitle()}">Prof. John Smith</option>
+                                    th:text="${mentor.name + ' - ' + mentor.getEmail() + ' (' + mentor.getTitle() + ')'}">Prof. John Smith</option>
                         </select>
-                        <small class="form-text text-muted">You can select multiple mentors</small>
+                        <small class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Одберете ментор или ментори кои го водат проектот
+                        </small>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="teamMemberIds" class="form-label">Team Members</label>
+                    <div class="form-group">
+                        <label for="teamMemberIds" class="form-label">
+                            <i class="fas fa-users"></i>
+                            Членови на тимот
+                        </label>
                         <select id="teamMemberIds" name="teamMemberIds" class="form-control select2" multiple>
                             <option th:each="student : ${availableStudents}"
                                     th:value="${student.getIndex()}"
-                                    th:text="${student.getName() + ' ' + student.getIndex()}">Student Name</option>
+                                    th:text="${student.getName() + ' (' + student.getIndex() + ')'}">Student Name</option>
                         </select>
-
-                        <small class="form-text text-muted">You can select multiple team members</small>
+                        <small class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Додадете ги сите студенти кои работат на проектот
+                        </small>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="repoLink" class="form-label">Repository Link</label>
-                        <input type="url" id="repoLink" name="repoLink" class="form-control"
-                               placeholder="GitHub/GitLab link to your project">
+                    <div class="form-group">
+                        <label for="repoLink" class="form-label">
+                            <i class="fab fa-github"></i>
+                            Repository линк
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-link"></i>
+                            </span>
+                            <input type="url" id="repoLink" name="repoLink" class="form-control"
+                                   placeholder="https://github.com/username/repository">
+                        </div>
+                        <small class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            GitHub или GitLab линк до вашиот проект
+                        </small>
                     </div>
+                </div>
 
-                    <div class="mb-3 mt-4 text-center">
-                        <button type="submit" class="btn btn-primary px-4">Create Project</button>
-                        <a th:href="@{/projects}" class="btn btn-secondary px-4 ml-2">Cancel</a>
-                    </div>
-                </form>
-            </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Креирај проект
+                    </button>
+                    <a th:href="@{/projects}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Откажи
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-            crossorigin="anonymous"></script>    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
             $('.select2').select2({
-                theme: "bootstrap",
-                placeholder: "Select options",
-                allowClear: true
+                placeholder: "Одберете опции...",
+                allowClear: true,
+                closeOnSelect: false
+            });
+
+            $('.form-control, .form-select').on('focus', function() {
+                $(this).closest('.form-group').addClass('focused');
+            }).on('blur', function() {
+                $(this).closest('.form-group').removeClass('focused');
+            });
+
+            $('form').on('submit', function() {
+                const submitBtn = $(this).find('button[type="submit"]');
+                submitBtn.prop('disabled', true)
+                    .html('<i class="fas fa-spinner fa-spin me-2"></i>Се креира...');
+            });
+
+            $('textarea').on('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
             });
         });
     </script>

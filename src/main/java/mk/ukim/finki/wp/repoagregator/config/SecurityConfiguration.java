@@ -43,22 +43,20 @@ public class SecurityConfiguration extends AuthConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         this.authorize(http)
                 .formLogin(form -> form
-                        .loginPage("/login")              // Custom login page
-                        .loginProcessingUrl("/login")     // Form submission URL
-                        .defaultSuccessUrl("/projects", true)     // Where to go after login
-                        .failureUrl("/login?error=true")  // Where to go if login fails
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/projects", true)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")             // Logout URL
-                        .logoutSuccessUrl("/login?logout=true") // Where to go after logout
-                        .invalidateHttpSession(true)     // Clear session
-                        .deleteCookies("JSESSIONID")      // Delete session cookie
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
 
-        // REMOVE THIS LINE - this is what's causing the browser popup:
-        // http.httpBasic((basic) -> basic.realmName("wp.finki.ukim.mk"));
 
         return http.build();
     }

@@ -10,9 +10,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
     :root {
-      --primary-gradient: linear-gradient(135deg, #667eea 0%, #2e4ac4 100%);
+      --primary-gradient: linear-gradient(135deg, #5789bc 0%, #3e2c60 100%);
       --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --success-gradient: linear-gradient(135deg, #5789bc 0%, #5789bc 100%);
       --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       --card-shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15);
     }
@@ -105,8 +105,8 @@
     }
 
     .badge-course {
-      background: linear-gradient(135deg, #e5e5e5 0%, #849ce7 100%);
-      color: #4a5568;
+      background: linear-gradient(135deg, #5789bc 0%, #5789bc 100%);
+      color: #ffffff;
       box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3);
     }
 
@@ -322,10 +322,13 @@
   <div class="container py-5">
     <div class="project-header">
       <h1 class="display-4">Студентски Проекти</h1>
-      <a th:href="@{/projects/create}" class="btn text-light fw-bold" style="background: var(--primary-gradient); border-radius: 12px; padding: 0.8rem 1.5rem;">
-        <i class="fas fa-plus me-2"></i> Додади нов проект
-      </a>
+      <th:block sec:authorize="hasRole('ROLE_STUDENT')">
+          <a th:href="@{/projects/create}" class="btn text-light fw-bold" style="background: var(--primary-gradient); border-radius: 12px; padding: 0.8rem 1.5rem;">
+            <i class="fas fa-plus me-2"></i> Додади нов проект
+          </a>
+      </th:block>
     </div>
+
 
     <div class="filter-card">
       <div class="card-body">

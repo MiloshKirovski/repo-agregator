@@ -13,7 +13,7 @@
                     </li>
                     <li th:each="pageNum : ${#numbers.sequence(T(java.lang.Math).max(1,page.number-5), (page.totalPages == 0? 1: T(java.lang.Math).min(page.totalPages,page.number+5)))}"
                         th:class="${page.number+1 == pageNum} ? 'page-item active' : 'page-item'">
-                        <a class="page-link text-muted" href="#"
+                        <a class="page-link " href="#"
                            onClick="updateQueryStringParameter('pageNum', this.getAttribute('page-number'))"
                            th:page-number="${pageNum}" th:text="${pageNum}">
                         </a>

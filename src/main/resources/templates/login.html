@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - FINKI Repository</title>
+  <title>Најава - FINKI Repository</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background:  linear-gradient(135deg, #5789bc 0%, #3e2c60 100%);
       margin: 0;
       padding: 0;
       min-height: 100vh;
@@ -69,7 +69,7 @@
     .login-btn {
       width: 100%;
       padding: 0.75rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background:  linear-gradient(135deg, #5789bc 0%, #3e2c60 100%);
       color: white;
       border: none;
       border-radius: 5px;
@@ -99,24 +99,9 @@
       color: #155724;
       border: 1px solid #c3e6cb;
     }
-
-    .credentials-info {
-      background-color: #e3f2fd;
-      border: 1px solid #bbdefb;
-      border-radius: 5px;
-      padding: 1rem;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-    }
-
     .credentials-info h4 {
       margin: 0 0 0.5rem 0;
       color: #1976d2;
-    }
-
-    .user-list {
-      font-size: 0.8rem;
-      color: #555;
     }
   </style>
 </head>
@@ -124,46 +109,26 @@
 <div class="login-container">
   <div class="login-header">
     <h1>FINKI Repository</h1>
-    <p>Please sign in to continue</p>
+    <p>Најавете се за да продолжите!</p>
   </div>
 
-  <!-- Error message -->
   <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-  <!-- Logout message -->
   <div th:if="${logoutMessage}" class="alert alert-success" th:text="${logoutMessage}"></div>
 
-  <!-- Login form -->
   <form th:action="@{/login}" method="post">
     <div class="form-group">
-      <label for="username">Username:</label>
+      <label for="username">Корисничко име:</label>
       <input type="text" id="username" name="username" required>
     </div>
 
     <div class="form-group">
-      <label for="password">Password:</label>
+      <label for="password">Лозинка:</label>
       <input type="password" id="password" name="password" required>
     </div>
 
-    <button type="submit" class="login-btn">Sign In</button>
+    <button type="submit" class="login-btn">Најави се</button>
   </form>
-
-  <!-- Development info -->
-  <div class="credentials-info">
-    <h4>Available Test Users:</h4>
-    <div class="user-list">
-      <strong>Professors:</strong><br>
-      • monika.simjanoska<br>
-      • bojana.koteska<br>
-      • kostadin.mishev<br><br>
-      <strong>Students:</strong><br>
-      • student1<br>
-      • student2<br><br>
-      <strong>Admin:</strong><br>
-      • admin<br><br>
-      <strong>Password for all:</strong> SystemPass
-    </div>
-  </div>
 </div>
 </body>
 </html>
