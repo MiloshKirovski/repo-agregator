@@ -54,7 +54,6 @@ public class ProjectController {
                               @RequestParam(defaultValue = "1") Integer pageNum,
                               @RequestParam(defaultValue = "5") Integer results,
                               Model model) {
-        System.out.println("XXX: " + search + " " + year);
         Page<Project> page = this.projectService.findPage(search, course, year, pageNum, results);
         model.addAttribute("page", page);
         model.addAttribute("allCourses", subjectRepository.findAll());
@@ -85,7 +84,6 @@ public class ProjectController {
     ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String currentUserId = auth.getName();
-        System.out.println(currentUserId);
         String userEmail = userService.findById(currentUserId).getEmail();
         String studentId = studentService.findByEmail(userEmail).getIndex();
         projectService.createProject(
@@ -130,7 +128,7 @@ public class ProjectController {
         model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
         model.addAttribute("isProfessor", isProfessor);
 
-        return "my-projects";
+        return "my-projects-no-filter";
     }
 
     @PostMapping("/projects/{id}/update-status")
@@ -157,6 +155,7 @@ public class ProjectController {
         model.addAttribute("availableCourses", subjectRepository.findAll());
         model.addAttribute("availableMentors", professorService.findAll());
         model.addAttribute("availableStudents", studentRepository.findAll());
+        model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
 
         return "create-project";
     }
@@ -180,6 +179,7 @@ public class ProjectController {
             model.addAttribute("comment", comment);
         }
 
+        model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
         model.addAttribute("project", project);
         model.addAttribute("readme", readmeContent);
 
