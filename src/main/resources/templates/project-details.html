@@ -8,19 +8,50 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #5789bc 0%, #3e2c60 100%);
+            --secondary-gradient: linear-gradient(135deg, #8a2a52 0%, #5c1826 100%);
+            --success-gradient: linear-gradient(135deg, #5789bc 0%, #5789bc 100%);
+            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
         .project-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
-            padding: 2rem 0;
+            padding: 3rem 0;
             margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.03"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
         }
 
         .project-title {
-            font-size: 2.5rem;
-            font-weight: 300;
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .project-meta {
@@ -28,49 +59,97 @@
             flex-wrap: wrap;
             gap: 1rem;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
 
-        .badge-custom {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            border-radius: 20px;
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: none;
+            transition: all 0.3s ease;
         }
 
         .badge-year {
-            background-color: #007bff;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
         }
 
         .badge-repo {
-            background-color: #24292e;
-            text-decoration: none;
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
             color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
         }
 
         .badge-repo:hover {
-            background-color: #1a1e22;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             color: white;
             text-decoration: none;
         }
 
-        .section-card {
-            margin-bottom: 2rem;
+        .card {
             border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-radius: 10px;
+            border-radius: 20px;
+            background: white;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .card:hover::before {
+            opacity: 1;
         }
 
         .section-header {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-bottom: 1px solid #dee2e6;
-            padding: 1rem 1.5rem;
-            border-radius: 10px 10px 0 0;
+            padding: 1.5rem;
+            border-radius: 20px 20px 0 0;
         }
 
         .section-header h3 {
             margin: 0;
-            color: #495057;
-            font-size: 1.25rem;
-            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header h3 i {
+            margin-right: 0.5rem;
+            color: #5789bc;
         }
 
         .section-body {
@@ -78,36 +157,55 @@
         }
 
         .team-member, .mentor-item {
-            display: inline-block;
-            background-color: #e9ecef;
+            background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
             padding: 0.5rem 1rem;
             margin: 0.25rem;
             border-radius: 20px;
             font-size: 0.9rem;
+            display: inline-block;
+            font-weight: 500;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover, .mentor-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .mentor-item {
-            background-color: #d1ecf1;
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
             color: #0c5460;
+            border-color: #b8daff;
         }
 
         .course-badge {
-            background-color: #6c757d;
+            background: var(--success-gradient);
             color: white;
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 1rem;
             margin: 0.25rem;
             border-radius: 15px;
             font-size: 0.85rem;
             display: inline-block;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(87, 137, 188, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .course-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(87, 137, 188, 0.4);
         }
 
         .readme-content {
             background-color: #ffffff;
             border: 1px solid #d1d5da;
-            border-radius: 6px;
+            border-radius: 15px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             line-height: 1.6;
             color: #24292e;
+            padding: 1.5rem;
         }
 
         .readme-content h1,
@@ -136,7 +234,7 @@
 
         .readme-content pre {
             background-color: #f6f8fa;
-            border-radius: 6px;
+            border-radius: 10px;
             font-size: 85%;
             line-height: 1.45;
             overflow: auto;
@@ -145,7 +243,7 @@
 
         .readme-content code {
             background-color: rgba(27, 31, 35, 0.05);
-            border-radius: 3px;
+            border-radius: 5px;
             font-size: 85%;
             margin: 0;
             padding: 0.2em 0.4em;
@@ -175,6 +273,8 @@
             display: block;
             overflow: auto;
             width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
         .readme-content table th,
@@ -192,183 +292,245 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid #dee2e6;
+            background: var(--primary-gradient);
+            border: none;
             border-radius: 50px;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             text-decoration: none;
-            color: #495057;
-            font-weight: 500;
-            transition: all 0.3s;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
             z-index: 1000;
+            box-shadow: 0 4px 15px rgba(87, 137, 188, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .back-button:hover {
-            background-color: #fff;
-            color: #007bff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(87, 137, 188, 0.4);
+            color: white;
             text-decoration: none;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button i {
+            margin-right: 0.5rem;
         }
 
         .no-data {
-            color: #6c757d;
+            color: #718096;
             font-style: italic;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .no-readme-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .no-readme-state i {
+            color: #5789bc;
+            margin-bottom: 1rem;
+        }
+
+        .no-readme-state h5 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .no-readme-state p {
+            color: #718096;
+        }
+
+        .comment-badge {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            padding: 0.75rem 1.25rem;
+            margin: 0.25rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            display: inline-block;
+            font-weight: 500;
+            border: 1px solid #90caf9;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(21, 101, 192, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .project-title {
+                font-size: 2rem;
+            }
+
+            .back-button {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 1rem;
+                display: inline-block;
+            }
+
+            .project-header {
+                padding: 2rem 0;
+            }
+
+            .section-header {
+                padding: 1rem;
+            }
+
+            .section-body {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
 <div layout:fragment="content">
-    <!-- Content omitted for brevity, already valid above -->
     <a href="/projects" class="back-button">
-        <i class="fas fa-arrow-left mr-2"></i>Back to Projects
+        <i class="fas fa-arrow-left"></i>Назад кон проекти
     </a>
 
-    <!-- Project Header -->
     <div class="project-header">
         <div class="container">
-            <h1 class="project-title" th:text="${project.name}">Project Name</h1>
+            <h1 class="project-title" th:text="${project.name}">Име на проект</h1>
             <div class="project-meta">
-                <span class="badge badge-custom badge-year" th:text="${project.year}">2023</span>
-<!--                <a th:if="${project.repoUrl}"-->
-<!--                   th:href="${project.repoUrl}"-->
-<!--                   target="_blank"-->
-<!--                   class="badge badge-custom badge-repo">-->
-<!--                    <i class="fab fa-github mr-2"></i>View Repository-->
-<!--                </a>-->
+                <span class="badge badge-year" th:text="${project.year}">2023</span>
 
                 <a th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGithub}"
-                   th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-custom badge-repo">
-                    <i class="fab fa-github mr-2"></i>Repository
+                   th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-repo">
+                    <i class="fab fa-github me-1"></i>Repository
                 </a>
                 <a th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGitlab}"
-                   th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-custom badge-repo">
-                    <i class="fab fa-gitlab mr-2"></i>Repository
+                   th:href="${project.getRepoUrl()}" target="_blank" class="badge badge-repo">
+                    <i class="fab fa-gitlab me-1"></i>Repository
                 </a>
             </div>
         </div>
     </div>
 
     <div class="container pb-5">
-        <!-- Project Description -->
-        <div class="card section-card">
+        <div class="card">
             <div class="section-header">
-                <h3><i class="fas fa-info-circle mr-2"></i>Project Description</h3>
+                <h3><i class="fas fa-info-circle"></i>Опис на проект</h3>
             </div>
             <div class="section-body">
                 <p th:text="${project.shortDescription}" class="mb-0">
-                    This is the detailed description of the project. It provides comprehensive information about what the project does, its goals, and its significance.
+                    Опис на проектот.
                 </p>
-                <p th:if="${#strings.isEmpty(project.shortDescription)}" class="no-data mb-0">
-                    No description available for this project.
-                </p>
+                <div th:if="${#strings.isEmpty(project.shortDescription)}" class="no-data mb-0">
+                    <i class="fas fa-file-alt fa-2x mb-3"></i>
+                    <p class="mb-0">Нема достапен опис за проектот.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Team Members -->
-        <div class="card section-card">
+        <div class="card">
             <div class="section-header">
-                <h3><i class="fas fa-users mr-2"></i>Team Members</h3>
+                <h3><i class="fas fa-users"></i>Членови на тим</h3>
             </div>
             <div class="section-body">
                 <div th:if="${not #lists.isEmpty(project.teamMembers)}">
-          <span class="team-member" th:each="member : ${project.teamMembers}"
-                th:text="${member.name + ' (' + member.index + ')'}">
-            John Doe (123456)
-          </span>
+                    <span class="team-member" th:each="member : ${project.teamMembers}"
+                          th:text="${member.name + ' (' + member.index + ')'}">
+                        John Doe (123456)
+                    </span>
                 </div>
-                <p th:if="${#lists.isEmpty(project.teamMembers)}" class="no-data mb-0">
-                    No team members listed for this project.
-                </p>
+                <div th:if="${#lists.isEmpty(project.teamMembers)}" class="no-data mb-0">
+                    <i class="fas fa-users fa-2x mb-3"></i>
+                    <p class="mb-0">Нема достапни членови на тимот.</p>
+                </div>
             </div>
         </div>
 
-        <!-- Mentors -->
-        <div class="card section-card">
+        <div class="card">
             <div class="section-header">
-                <h3><i class="fas fa-chalkboard-teacher mr-2"></i>Mentors</h3>
+                <h3><i class="fas fa-chalkboard-teacher"></i>Ментори</h3>
             </div>
             <div class="section-body">
                 <div th:if="${not #lists.isEmpty(project.mentors)}">
-          <span class="mentor-item" th:each="mentor : ${project.mentors}"
-                th:text="${mentor.title + ' ' + mentor.name}">
-            Prof. Jane Smith
-          </span>
+                    <span class="mentor-item" th:each="mentor : ${project.mentors}"
+                          th:text="${mentor.title + ' ' + mentor.name}">
+                        Prof. Jane Smith
+                    </span>
                 </div>
-                <p th:if="${#lists.isEmpty(project.mentors)}" class="no-data mb-0">
-                    No mentors assigned to this project.
-                </p>
+                <div th:if="${#lists.isEmpty(project.mentors)}" class="no-data mb-0">
+                    <i class="fas fa-chalkboard-teacher fa-2x mb-3"></i>
+                    <p class="mb-0">Нема достапни ментори за проектот.</p>
+                </div>
             </div>
         </div>
 
-
-        <div class="card section-card">
+        <div class="card">
             <div class="section-header">
-                <h3><i class="fas fa-book mr-2"></i>Associated Courses</h3>
+                <h3><i class="fas fa-book"></i>Предмети</h3>
             </div>
             <div class="section-body">
                 <div th:if="${not #lists.isEmpty(project.subjects)}">
-          <span class="course-badge" th:each="course : ${project.subjects}"
-                th:text="${course.name}">
-            CS101 - Introduction to Computer Science
-          </span>
+                    <span class="course-badge" th:each="course : ${project.subjects}"
+                          th:text="${course.name}">
+                        CS101 - Computer Science
+                    </span>
                 </div>
-                <p th:if="${#lists.isEmpty(project.subjects)}" class="no-data mb-0">
-                    No courses associated with this project.
-                </p>
+                <div th:if="${#lists.isEmpty(project.subjects)}" class="no-data mb-0">
+                    <i class="fas fa-book fa-2x mb-3"></i>
+                    <p class="mb-0">Нема достапни предмети за проектот.</p>
+                </div>
             </div>
         </div>
 
-        <div class="card section-card">
+        <div class="card">
             <div class="section-header">
-                <h3><i class="bi bi-chat-dots mr-2"></i>Comment</h3>
+                <h3><i class="bi bi-chat-dots"></i>Коментар</h3>
             </div>
             <div class="section-body">
                 <div th:if="${comment != null and comment.comment != ''}">
-            <span class="course-badge text-wrap"
-                  style="white-space: normal; word-break: break-word;"
-                  th:text="${comment.comment}"></span>
+                    <span class="comment-badge" th:text="${comment.comment}"></span>
                 </div>
-                <p th:if="${comment == null or comment.comment == ''}" class="no-data mb-0">
-                    No comment
-                </p>
+                <div th:if="${comment == null or comment.comment == ''}" class="no-data mb-0">
+                    <i class="bi bi-chat-dots fa-2x mb-3"></i>
+                    <p class="mb-0">Нема коментар.</p>
+                </div>
             </div>
         </div>
 
-
-
-        <!-- README Content -->
-        <div class="card section-card">
+        <div class="card">
             <div class="section-header">
-                <h3 th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGithub}"><i class="fab fa-github mr-2"></i>README Documentation</h3>
-                <h3 th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGitlab}"><i class="fab fa-gitlab mr-2"></i>README Documentation</h3>
-
+                <h3 th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGithub}">
+                    <i class="fab fa-github"></i>README Документација
+                </h3>
+                <h3 th:if="${project.getRepoUrl() != null && !project.getRepoUrl().isEmpty() && project.getPlatform()==repositoryTypeGitlab}">
+                    <i class="fab fa-gitlab"></i>README Документација
+                </h3>
             </div>
             <div class="section-body">
                 <div th:if="${readme != null and !#strings.contains(readme, 'README not found')}"
                      class="readme-content"
                      th:utext="${#strings.replace(#strings.escapeXml(readme), '&#10;', '<br/>')}">
-                    <!-- README content will be rendered here -->
                 </div>
                 <div th:if="${readme == null or #strings.contains(readme, 'README not found')}"
-                     class="text-center py-4">
-                    <i class="fab fa-github fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">README Not Available</h5>
-                    <p class="text-muted mb-0">
-                        The README file could not be loaded from the repository, or no repository is linked to this project.
+                     class="no-readme-state">
+                    <i class="fab fa-github fa-3x"></i>
+                    <h5>README не е достапен</h5>
+                    <p class="mb-0">
+                        README не е достапен.
                     </p>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- JavaScript dependencies -->
-
 </div>
-<!-- JavaScript dependencies -->
+
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>
-
 </body>
 </html>

@@ -65,10 +65,8 @@ public class GithubServiceImpl implements GithubService {
             }
 
         } catch (IllegalArgumentException e) {
-            System.err.println("Base64 decoding error: " + e.getMessage());
             return "Error decoding README content from GitHub.";
         } catch (Exception e) {
-            System.err.println("Error fetching README: " + e.getMessage());
             e.printStackTrace();
             return "README not found or error fetching README.";
         }

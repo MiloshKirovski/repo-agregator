@@ -10,7 +10,4 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaSpecificationRepository<Room, String> {
 
-    Optional<Room> findByName(String name);
-
-    List<Room> findAllByTypeIsNotLike(RoomType type);
 }

@@ -18,8 +18,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 public class Professor {
-
-    // TODO: Check if it is okay to generate ids like this
     @Id
     @UuidGenerator
     @Column(name = "id")

@@ -284,11 +284,11 @@
 <div layout:fragment="content">
     <div class="container py-5">
         <div class="project-header d-flex flex-column">
-            <h1 class="display-4">Креирај Нов Проект</h1>
-            <p class="intro">Пополнете ги деталите за вашиот проект</p>
+            <h1 class="display-4" th:text="${editMode ? 'Измени Проект' : 'Креирај Нов Проект'}">Креирај Нов Проект</h1>
+            <p class="intro" th:text="${editMode ? 'Измените ги деталите за вашиот проект' : 'Пополнете ги деталите за вашиот проект'}">Пополнете ги деталите за вашиот проект</p>
         </div>
         <div class="form-container">
-            <form th:action="@{/projects/create}" method="post" th:object="${projectForm}">
+            <form th:action="${editMode ? '/projects/edit/' + project.id : '/projects/create'}" method="post" th:object="${editMode ? project : projectForm}">
                 <div class="form-body">
                     <div class="form-row">
                         <div class="form-group">
@@ -297,7 +297,8 @@
                                 Име на проект
                             </label>
                             <input type="text" id="name" name="name" class="form-control" required
-                                   placeholder="Внесете име на проект">
+                                   placeholder="Внесете име на проект"
+                                   th:value="${editMode ? project.name : ''}">
                         </div>
                         <div class="form-group">
                             <label for="year" class="form-label">
@@ -305,7 +306,8 @@
                                 Година
                             </label>
                             <input type="number" id="year" name="year" class="form-control" required
-                                   placeholder="2024" min="2000" max="2030">
+                                   placeholder="2024" min="2000" max="2030"
+                                   th:value="${editMode ? project.year : ''}">
                         </div>
                     </div>
 
@@ -315,7 +317,8 @@
                             Краток опис
                         </label>
                         <textarea id="description" name="description" class="form-control" rows="4"
-                                  placeholder="Опишете го вашиот проект во неколку реченици..."></textarea>
+                                  placeholder="Опишете го вашиот проект во неколку реченици..."
+                                  th:text="${editMode ? project.getShortDescription() : ''}"></textarea>
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
                             Краток и јасен опис за целта и функционалноста на проектот
@@ -330,7 +333,8 @@
                         <select id="courseIds" name="courseIds" class="form-control select2" multiple>
                             <option th:each="course : ${availableCourses}"
                                     th:value="${course.id}"
-                                    th:text="${course.name}">CS101 - Course Name</option>
+                                    th:text="${course.name}"
+                                    th:selected="${editMode ? #lists.contains(project.getSubjects(), course) : false}">CS101 - Course Name</option>
                         </select>
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
@@ -346,7 +350,8 @@
                         <select id="mentorIds" name="mentorIds" class="form-control select2" multiple>
                             <option th:each="mentor : ${availableMentors}"
                                     th:value="${mentor.id}"
-                                    th:text="${mentor.name + ' - ' + mentor.getEmail() + ' (' + mentor.getTitle() + ')'}">Prof. John Smith</option>
+                                    th:text="${mentor.name + ' - ' + mentor.getEmail() + ' (' + mentor.getTitle() + ')'}"
+                                    th:selected="${editMode ? #lists.contains(project.getMentors(), mentor) : false}">Prof. John Smith</option>
                         </select>
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
@@ -362,7 +367,8 @@
                         <select id="teamMemberIds" name="teamMemberIds" class="form-control select2" multiple>
                             <option th:each="student : ${availableStudents}"
                                     th:value="${student.getIndex()}"
-                                    th:text="${student.getName() + ' (' + student.getIndex() + ')'}">Student Name</option>
+                                    th:text="${student.getName() + ' (' + student.getIndex() + ')'}"
+                                    th:selected="${editMode ? #lists.contains(project.teamMembers, student) : false}">Student Name</option>
                         </select>
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
@@ -380,7 +386,8 @@
                                 <i class="fas fa-link"></i>
                             </span>
                             <input type="url" id="repoLink" name="repoLink" class="form-control"
-                                   placeholder="https://github.com/username/repository">
+                                   placeholder="https://github.com/username/repository"
+                                   th:value="${editMode ? project.getRepoUrl() : ''}">
                         </div>
                         <small class="form-text">
                             <i class="fas fa-info-circle"></i>
@@ -391,8 +398,8 @@
 
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-plus"></i>
-                        Креирај проект
+                        <i th:class="${editMode ? 'fas fa-save' : 'fas fa-plus'}"></i>
+                        <span th:text="${editMode ? 'Зачувај измени' : 'Креирај проект'}">Креирај проект</span>
                     </button>
                     <a th:href="@{/projects}" class="btn btn-secondary">
                         <i class="fas fa-times"></i>
@@ -425,8 +432,11 @@
 
             $('form').on('submit', function() {
                 const submitBtn = $(this).find('button[type="submit"]');
+                const isEditMode = submitBtn.find('i').hasClass('fa-save');
+                const loadingText = isEditMode ? 'Се зачувуваат измените...' : 'Се креира...';
+
                 submitBtn.prop('disabled', true)
-                    .html('<i class="fas fa-spinner fa-spin me-2"></i>Се креира...');
+                    .html('<i class="fas fa-spinner fa-spin me-2"></i>' + loadingText);
             });
 
             $('textarea').on('input', function() {
@@ -437,4 +447,5 @@
     </script>
 </div>
 </body>
+
 </html>

@@ -13,6 +13,5 @@ public interface ProfessorService {
 
     List<Professor> listAllProfessors(String professorName);
 
-    TreeMap<Character, List<Professor>> findAllProfessorsSortedByFirstName(String professorName);
     List<Professor> findAll();
 }

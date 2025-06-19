@@ -123,7 +123,6 @@ public class FieldFilterSpecification {
         };
     }
 
-    // Generic method that returns the correct Path type
     @SuppressWarnings("unchecked")
     private static <T, R> Path<R> getFieldPath(String field, Root<T> root) {
         String[] parts = field.split("\\.");

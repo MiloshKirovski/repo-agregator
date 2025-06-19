@@ -46,32 +46,6 @@ public class ProfessorServiceImpl implements ProfessorService {
         return professorRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "name"));
     }
 
-    @Override
-    public TreeMap<Character, List<Professor>> findAllProfessorsSortedByFirstName(String professorName) {
-        List<Character> macedonianAlphabet = Arrays.asList(
-                'А', 'Б', 'В', 'Г', 'Д', 'Ѓ', 'Е', 'Ж', 'З', 'Ѕ', 'И', 'Ј',
-                'К', 'Л', 'Љ', 'М', 'Н', 'Њ', 'О', 'П', 'Р', 'С', 'Т', 'Ќ',
-                'У', 'Ф', 'Х', 'Ц', 'Ч', 'Џ', 'Ш'
-        );
-
-        TreeMap<Character, List<Professor>> professorsMap = new TreeMap<>((char1, char2) -> {
-            int index1 = macedonianAlphabet.indexOf(char1);
-            int index2 = macedonianAlphabet.indexOf(char2);
-            return Integer.compare(index1, index2);
-        });
-
-        listAllProfessors(professorName).forEach(p ->
-        {
-            char character = p.getName().toUpperCase().charAt(0);
-            if (macedonianAlphabet.contains(character)) {
-                List<Professor> professors = professorsMap.getOrDefault(character, new ArrayList<>());
-                professors.add(p);
-                professorsMap.put(character, professors);
-            }
-        });
-        return professorsMap;
-    }
-
     public List<Professor> findAll() {
         return professorRepository.findAll();
     }

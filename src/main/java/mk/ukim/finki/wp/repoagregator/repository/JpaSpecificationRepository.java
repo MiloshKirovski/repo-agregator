@@ -14,7 +14,5 @@ import java.util.List;
 public interface JpaSpecificationRepository<T, ID> extends JpaRepository<T, ID> {
     Page<T> findAll(Specification<T> filter, Pageable page);
 
-    List<T> findAll(Specification<T> filter);
-
     List<T> findAll(Specification<T> filter, Sort sort);
 }

@@ -55,14 +55,6 @@
     .card:hover::before {
       opacity: 1;
     }
-
-    .card-header {
-      background: transparent !important;
-      border: none;
-      padding: 1.5rem 1.5rem 1rem;
-      position: relative;
-    }
-
     .card-title {
       font-size: 1.4rem;
       font-weight: 700;
@@ -130,12 +122,6 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
       color: white;
       text-decoration: none;
-    }
-
-    .card-footer {
-      background: transparent;
-      border: none;
-      padding: 1rem 1.5rem 1.5rem;
     }
 
     .btn-outline-primary {
@@ -254,14 +240,6 @@
       background: var(--primary-gradient);
       border: none;
     }
-
-    .repo-link {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      z-index: 10;
-    }
-
     .card-badges {
       display: flex;
       flex-wrap: wrap;
@@ -269,7 +247,6 @@
       margin-bottom: 1rem;
     }
 
-    /* Mentor expansion styles */
     .mentor-toggle {
       color: #667eea;
       cursor: pointer;
@@ -292,12 +269,6 @@
     .mentor-hidden {
       display: none;
     }
-
-    .mentor-visible {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-5px); }
       to { opacity: 1; transform: translateY(0); }
@@ -322,11 +293,9 @@
   <div class="container py-5">
     <div class="project-header">
       <h1 class="display-4">Студентски Проекти</h1>
-      <th:block sec:authorize="hasRole('ROLE_STUDENT')">
-          <a th:href="@{/projects/create}" class="btn text-light fw-bold" style="background: var(--primary-gradient); border-radius: 12px; padding: 0.8rem 1.5rem;">
-            <i class="fas fa-plus me-2"></i> Додади нов проект
-          </a>
-      </th:block>
+      <a th:href="@{/projects/create}" class="btn text-light fw-bold" style="background: var(--primary-gradient); border-radius: 12px; padding: 0.8rem 1.5rem;">
+        <i class="fas fa-plus me-2"></i> Додади нов проект
+      </a>
     </div>
 
 
@@ -357,7 +326,6 @@
       </div>
     </div>
 
-    <!-- EMPTY STATE: Always show if no projects -->
     <div class="col-12" th:if="${#lists.isEmpty(page.getContent())}">
       <div class="empty-state">
         <i class="fas fa-search fa-3x text-muted mb-3"></i>
@@ -369,12 +337,10 @@
       </div>
     </div>
 
-    <!-- PROJECT CARDS: Only show when projects exist -->
     <div class="row g-3" th:if="${!#lists.isEmpty(page.getContent())}">
       <div class="col-6" th:each="project : ${page.getContent()}">
         <div class="card horizontal-card">
           <div class="row g-0 h-100">
-            <!-- Left side -->
             <div class="col-md-6">
               <div class="card-body-s h-100 d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -397,7 +363,6 @@
               </div>
             </div>
 
-            <!-- Right side -->
             <div class="col-md-6 ps-0">
               <div class="card-body h-100 d-flex flex-column justify-content-between">
                 <div>
@@ -427,7 +392,6 @@
                       <i class="fas fa-graduation-cap"></i> Ментори
                     </div>
                     <div class="team-members mentor-list">
-                      <!-- Show first mentor and toggle if there are more -->
                       <div th:if="${project.mentors.size() == 1}">
                         <span th:text="${project.mentors[0].getName()}">Prof. Smith</span>
                       </div>
@@ -462,14 +426,12 @@
             </div>
           </div>
         </div>
-      </div> <!-- END each -->
+      </div>
     </div>
 
-    <!-- Paging section -->
     <div th:include="fragments/paging :: pageSection(${page})"></div>
 
-  </div> <!-- /.container -->
-  <!-- /.layout:fragment -->
+  </div>
 
   <script>
     function toggleMentors(toggleElement) {

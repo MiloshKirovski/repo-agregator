@@ -4,10 +4,8 @@ import mk.ukim.finki.wp.repoagregator.service.GitLabService;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -29,7 +27,6 @@ public class GitLabServiceImpl implements GitLabService {
                 return "Invalid GitLab repository URL.";
             }
 
-            // Extract domain and path
             String cleanedUrl = repoUrl.replaceFirst("https://", "").replaceFirst("http://", "");
             String[] parts = cleanedUrl.split("/");
 
@@ -37,7 +34,7 @@ public class GitLabServiceImpl implements GitLabService {
                 return "Invalid GitLab repository URL format.";
             }
 
-            String domain = parts[0];  // e.g., gitlab.com or gitlab.finki.ukim.mk
+            String domain = parts[0];
             String namespace = parts[1];
             String project = parts[2];
 
@@ -45,13 +42,10 @@ public class GitLabServiceImpl implements GitLabService {
                 project = project.substring(0, project.length() - 4);
             }
 
-            // Reconstruct the base GitLab API URL
             String apiBase = "https://" + domain + "/api/v4";
 
-            // Build project path with manual encoding of just the slash
             String encodedProjectPath = namespace + "%2F" + project;
 
-            // Build the complete URL as a string first, then convert to URI
             String completeUrl = apiBase + "/projects/" + encodedProjectPath + "/repository/files/README.md?ref=HEAD";
             URI uri = URI.create(completeUrl);
 
@@ -69,7 +63,6 @@ public class GitLabServiceImpl implements GitLabService {
                 if (body.containsKey("content")) {
                     String base64Content = (String) body.get("content");
 
-                    // Remove whitespace and newlines from base64 content
                     base64Content = base64Content.replaceAll("\\s", "");
 
                     byte[] decodedBytes = Base64.getDecoder().decode(base64Content);
@@ -84,10 +77,8 @@ public class GitLabServiceImpl implements GitLabService {
             }
 
         } catch (IllegalArgumentException e) {
-            System.err.println("Base64 decoding error: " + e.getMessage());
             return "Error decoding README content from GitLab.";
         } catch (Exception e) {
-            System.err.println("Error fetching README from GitLab: " + e.getMessage());
             e.printStackTrace();
             return "README not found or error fetching README from GitLab.";
         }

@@ -16,7 +16,7 @@ import java.util.Objects;
 public class Subject {
 
     @Id
-    private String id; // code
+    private String id;
 
     @Column(nullable = false)
     private String name;

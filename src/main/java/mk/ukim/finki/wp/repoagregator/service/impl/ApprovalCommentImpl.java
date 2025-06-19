@@ -6,8 +6,6 @@ import mk.ukim.finki.wp.repoagregator.repository.ApprovalCommentRepository;
 import mk.ukim.finki.wp.repoagregator.service.ApprovalCommentService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ApprovalCommentImpl implements ApprovalCommentService {
     private final ApprovalCommentRepository approvalCommentRepository;

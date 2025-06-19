@@ -1,17 +1,14 @@
 package mk.ukim.finki.wp.repoagregator.web;
 
-import jakarta.servlet.http.HttpServletRequest;
 import mk.ukim.finki.wp.repoagregator.model.*;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.ProjectStatus;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.RepositoryType;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.UserRole;
-import mk.ukim.finki.wp.repoagregator.repository.ProfessorRepository;
 import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
 import mk.ukim.finki.wp.repoagregator.repository.SubjectRepository;
 import mk.ukim.finki.wp.repoagregator.service.*;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -59,18 +55,13 @@ public class ProjectController {
         model.addAttribute("allCourses", subjectRepository.findAll());
         model.addAttribute("year", year);
         model.addAttribute("search", search);
-        model.addAttribute("course", course); // Add this line
-        model.addAttribute("selectedCourse", course); // Add this line for template compatibility
+        model.addAttribute("course", course);
+        model.addAttribute("selectedCourse", course);
         model.addAttribute("repositoryTypeGithub", RepositoryType.GITHUB);
         model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
         model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
         return "projects";
     }
-
-//    @GetMapping("/")
-//    public String Index(){
-//        return "projects";
-//    }
 
     @PostMapping("/projects/create")
     public String createProject(
@@ -101,11 +92,7 @@ public class ProjectController {
 
     @GetMapping("/user/{username}")
     public String getMyProjectsPage(@PathVariable String username,
-                                    @RequestParam(required = false) String search,
-                                    @RequestParam(required = false) Long course,
-                                    @RequestParam(required = false) Integer year,
                                     Model model) {
-        System.out.println(username);
         User user = userService.findById(username);
         boolean isStudent = user.getRole() == UserRole.STUDENT;
         boolean isProfessor = user.getRole() == UserRole.PROFESSOR || user.getRole() == UserRole.ACADEMIC_AFFAIR_VICE_DEAN;
@@ -157,11 +144,57 @@ public class ProjectController {
         model.addAttribute("availableStudents", studentRepository.findAll());
         model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
 
+        model.addAttribute("editMode", false);
         return "create-project";
     }
 
+    @GetMapping("/projects/edit/{id}")
+    public String getEdit(@PathVariable Long id, Model model) {
+        Project project = projectService.findById(id);
+        model.addAttribute("project", project);
+
+        model.addAttribute("availableCourses", subjectRepository.findAll());
+        model.addAttribute("availableMentors", professorService.findAll());
+        model.addAttribute("availableStudents", studentRepository.findAll());
+        model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("editMode", true);
+
+        return "create-project";
+    }
+
+    @PostMapping("/projects/edit/{id}")
+    public String update(@PathVariable Long id,
+                         @RequestParam String name,
+                         @RequestParam Integer year,
+                         @RequestParam(required = false) String description,
+                         @RequestParam(required = false) List<String> courseIds,
+                         @RequestParam(required = false) List<String> mentorIds,
+                         @RequestParam(required = false) List<String> teamMemberIds,
+                         @RequestParam(required = false) String repoLink) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Project project = projectService.findById(id);
+        String studentId = project.getCreatedBy().getIndex();
+
+        projectService.update(
+                id,
+                name,
+                description,
+                repoLink,
+                year,
+                courseIds,
+                mentorIds,
+                teamMemberIds,
+                studentId
+        );
+
+        String username = auth.getName();
+        return "redirect:/user/" + username;
+    }
+
     @GetMapping("/projects/{id}")
-    public String viewProjectDetails(@PathVariable Long id, Model model, @RequestParam(required = false) String fromMyProjects) {
+    public String viewProjectDetails(@PathVariable Long id,
+                                     Model model,
+                                     @RequestParam(required = false) String fromMyProjects) {
         Project project = projectService.findById(id);
         String readmeContent="";
         if (project.getPlatform().equals(RepositoryType.GITHUB)) {
@@ -187,5 +220,13 @@ public class ProjectController {
         model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
 
         return "project-details";
+    }
+
+    @GetMapping("/projects/delete/{id}")
+    public String deleteProject(@PathVariable Long id) {
+        projectService.deleteProject(id);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return "redirect:/user/" + username;
     }
 }

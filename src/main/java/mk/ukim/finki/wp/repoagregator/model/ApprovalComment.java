@@ -1,7 +1,6 @@
 package mk.ukim.finki.wp.repoagregator.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
@@ -14,7 +13,7 @@ public class ApprovalComment {
     private String comment;
     private boolean approved;
 
-    @OneToOne(mappedBy = "approvalComment")
+    @OneToOne(mappedBy = "approvalComment", cascade = CascadeType.ALL)
     private Project project;
 
     @ManyToOne

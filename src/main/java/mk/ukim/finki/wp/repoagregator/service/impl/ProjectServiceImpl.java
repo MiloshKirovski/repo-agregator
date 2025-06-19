@@ -14,7 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,18 +25,15 @@ public class ProjectServiceImpl implements ProjectService {
     private final SubjectRepository subjectRepository;
     private final ProfessorRepository professorRepository;
     private final StudentRepository studentRepository;
-    private final ApprovalCommentRepository approvalCommentRepository;
 
     public ProjectServiceImpl(ProjectRepository projectRepository,
                               SubjectRepository subjectRepository,
                               ProfessorRepository professorRepository,
-                              StudentRepository studentRepository,
-                              ApprovalCommentRepository approvalCommentRepository) {
+                              StudentRepository studentRepository) {
         this.projectRepository = projectRepository;
         this.subjectRepository = subjectRepository;
         this.professorRepository = professorRepository;
         this.studentRepository = studentRepository;
-        this.approvalCommentRepository = approvalCommentRepository;
     }
 
     @Override
@@ -67,55 +66,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    @Transactional
-    public void approveProject(Long projectId, String professorId, String comment) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
-
-        project.setProjectStatus(ProjectStatus.APPROVED);
-
-        Professor reviewer = professorRepository.findById(professorId)
-                .orElseThrow(() -> new RuntimeException("Professor not found"));
-
-        ApprovalComment approvalComment = new ApprovalComment(comment, true, project, reviewer);
-
-        approvalCommentRepository.save(approvalComment);
-        project.setApprovalComment(approvalComment);
-
-        projectRepository.save(project);
-    }
-
-    @Override
-    @Transactional
-    public void rejectProject(Long projectId, String professorId, String comment) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
-
-        project.setProjectStatus(ProjectStatus.REJECTED);
-
-        Professor reviewer = professorRepository.findById(professorId)
-                .orElseThrow(() -> new RuntimeException("Professor not found"));
-
-        ApprovalComment approvalComment = new ApprovalComment(comment, false, project, reviewer);
-
-        approvalCommentRepository.save(approvalComment);
-        project.setApprovalComment(approvalComment);
-
-        projectRepository.save(project);
-    }
-
-    @Override
-    public List<Project> findAll() {
-        return projectRepository.findAll();
-    }
-
-    @Override
     public Project findById(Long id) {
         return projectRepository.findById(id).orElseThrow(ProjectNotFoundException::new);
-    }
-
-    public List<Project> findAllApproved() {
-        return projectRepository.findAll().stream().filter(p -> p.getProjectStatus() == ProjectStatus.APPROVED).collect(Collectors.toList());
     }
 
     @Override
@@ -140,58 +92,70 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<Project> findPage(String search, String course, Integer year, Integer pageNum, Integer pageSize) {
-        System.out.println("=== DEBUGGING FILTERS ===");
-        System.out.println("Search: '" + search + "' (length: " + (search != null ? search.length() : "null") + ")");
-        System.out.println("Course: '" + course + "'");
-        System.out.println("Year: " + year);
-
-        // Create specifications
         Specification<Project> searchSpec = FieldFilterSpecification.filterContainsText(Project.class, "name", search);
         Specification<Project> courseSpec = FieldFilterSpecification.filterEqualsInCollection("subjects.id", course);
         Specification<Project> yearSpec = FieldFilterSpecification.filterEqualsV(Project.class, "year", year);
         Specification<Project> projectStatus = FieldFilterSpecification.filterEqualsV(Project.class, "projectStatus", ProjectStatus.APPROVED);
 
-        System.out.println("Search spec created: " + (searchSpec != null));
-        System.out.println("Course spec created: " + (courseSpec != null));
-        System.out.println("Year spec created: " + (yearSpec != null));
-
-        // Test search filter alone first
-        if (searchSpec != null) {
-            try {
-                Page<Project> searchResults = this.projectRepository.findAll(
-                        searchSpec,
-                        PageRequest.of(pageNum - 1, pageSize)
-                );
-                System.out.println("Search-only results: " + searchResults.getTotalElements());
-            } catch (Exception e) {
-                System.out.println("Error with search filter: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-
-        // Combine all specifications
         Specification<Project> specification = Specification
                 .where(searchSpec)
                 .and(courseSpec)
                 .and(yearSpec)
                 .and(projectStatus);
 
-
         try {
             Page<Project> finalResults = this.projectRepository.findAll(
                     specification,
                     PageRequest.of(pageNum - 1, pageSize)
             );
-            System.out.println("Final combined results: " + finalResults.getTotalElements());
-            System.out.println("=== END DEBUG ===");
             return finalResults;
         } catch (Exception e) {
-            System.out.println("Error with combined specification: " + e.getMessage());
             e.printStackTrace();
-            System.out.println("=== END DEBUG ===");
             throw e;
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteProject(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(ProjectNotFoundException::new);
 
+        project.getTeamMembers().clear();
+        project.getMentors().clear();
+        project.getSubjects().clear();
+
+        projectRepository.save(project);
+        projectRepository.deleteById(project.getId());
+        projectRepository.flush();
+    }
+
+    @Override
+    public Optional<Project> update(Long projectId, String name, String description, String repoUrl, int year, List<String> courseIds, List<String> mentorIds, List<String> teamMemberIds, String createdByStudentId) {
+        List<Subject> subjects = new ArrayList<>();
+        List<Professor> mentors = new ArrayList<>();
+        List<Student> students = new ArrayList<>();
+
+        for (String courseId : courseIds) {
+            subjects.add(subjectRepository.findById(courseId).orElseThrow(RuntimeException::new));
+        }
+        for (String mentorId : mentorIds) {
+            mentors.add(professorRepository.findById(mentorId).orElseThrow(RuntimeException::new));
+        }
+        for (String teamMemberId : teamMemberIds) {
+            students.add(studentRepository.findById(teamMemberId).orElseThrow(RuntimeException::new));
+        }
+
+        return projectRepository
+                .findById(projectId)
+                .map(existingProject -> {
+                    existingProject.setName(name);
+                    existingProject.setShortDescription(description);
+                    existingProject.setRepoUrl(repoUrl);
+                    existingProject.setYear(year);
+                    existingProject.setMentors(mentors);
+                    existingProject.setSubjects(subjects);
+                    existingProject.setTeamMembers(students);
+                    return projectRepository.save(existingProject);
+                });
+    }
 }

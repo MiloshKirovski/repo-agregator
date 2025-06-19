@@ -33,7 +33,7 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private RepositoryType platform;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private ApprovalComment approvalComment;
 
     private int year;
