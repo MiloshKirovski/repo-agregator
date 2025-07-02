@@ -13,7 +13,6 @@ public class StudentServiceImpl implements StudentService {
         this.studentRepository = studentRepository;
     }
 
-
     @Override
     public Student findByEmail(String email) {
         return studentRepository.findByEmail(email).orElseThrow(RuntimeException::new);

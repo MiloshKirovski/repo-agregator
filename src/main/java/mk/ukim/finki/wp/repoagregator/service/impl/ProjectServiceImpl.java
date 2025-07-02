@@ -15,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,7 +47,15 @@ public class ProjectServiceImpl implements ProjectService {
                                  List<String> mentorIds,
                                  List<String> teamMemberIds,
                                  String createdByStudentId) {
-
+        if (courseIds == null) {
+            courseIds = Collections.emptyList();
+        }
+        if (mentorIds == null) {
+            mentorIds = Collections.emptyList();
+        }
+        if (teamMemberIds == null) {
+            teamMemberIds = Collections.emptyList();
+        }
         List<Subject> subjects = subjectRepository.findAllById(courseIds);
         List<Professor> mentors = professorRepository.findAllById(mentorIds);
         List<Student> teamMembers = studentRepository.findAllById(teamMemberIds);
@@ -58,7 +67,6 @@ public class ProjectServiceImpl implements ProjectService {
             repoType=RepositoryType.GITLAB;
         }else{
             repoType=RepositoryType.GITHUB;
-
         }
 
         Project project = new Project(name, description, repoUrl, ProjectStatus.PENDING, repoType, null, year, teamMembers, mentors, subjects, creator);

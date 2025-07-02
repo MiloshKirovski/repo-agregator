@@ -1,9 +1,11 @@
 package mk.ukim.finki.wp.repoagregator.web;
 
+import jakarta.servlet.http.HttpServletResponse;
 import mk.ukim.finki.wp.repoagregator.model.*;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.ProjectStatus;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.RepositoryType;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.UserRole;
+import mk.ukim.finki.wp.repoagregator.model.exceptions.ProjectNotFoundException;
 import mk.ukim.finki.wp.repoagregator.repository.StudentRepository;
 import mk.ukim.finki.wp.repoagregator.repository.SubjectRepository;
 import mk.ukim.finki.wp.repoagregator.service.*;
@@ -77,6 +79,7 @@ public class ProjectController {
         String currentUserId = auth.getName();
         String userEmail = userService.findById(currentUserId).getEmail();
         String studentId = studentService.findByEmail(userEmail).getIndex();
+
         projectService.createProject(
                 name,
                 description,
@@ -194,33 +197,39 @@ public class ProjectController {
     @GetMapping("/projects/{id}")
     public String viewProjectDetails(@PathVariable Long id,
                                      Model model,
-                                     @RequestParam(required = false) String fromMyProjects) {
-        Project project = projectService.findById(id);
-        String readmeContent="";
-        if (project.getPlatform().equals(RepositoryType.GITHUB)) {
-            readmeContent = githubService.fetchReadmeContent(project.getRepoUrl());
+                                     @RequestParam(required = false) String fromMyProjects,
+                                     HttpServletResponse response) {
+        try {
+            Project project = projectService.findById(id);
+            String readmeContent = "";
+            if (project.getPlatform().equals(RepositoryType.GITHUB)) {
+                readmeContent = githubService.fetchReadmeContent(project.getRepoUrl());
+            } else if (project.getPlatform().equals(RepositoryType.GITLAB)) {
+                readmeContent = gitLabService.fetchReadmeContent(project.getRepoUrl());
+            }
 
-        }else if (project.getPlatform().equals(RepositoryType.GITLAB)) {
-            readmeContent = gitLabService.fetchReadmeContent(project.getRepoUrl());
+            if (fromMyProjects != null) {
+                ApprovalComment comment = approvalCommentService.findByProject(project);
+                model.addAttribute("comment", comment);
+            } else {
+                model.addAttribute("comment", new ApprovalComment("", false, null, null));
+            }
+
+            model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
+            model.addAttribute("project", project);
+            model.addAttribute("readme", readmeContent);
+            model.addAttribute("repositoryTypeGithub", RepositoryType.GITHUB);
+            model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
+
+            return "project-details";
+
+        } catch (ProjectNotFoundException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "error-404";
         }
-        if(fromMyProjects != null) {
-            ApprovalComment comment = approvalCommentService.findByProject(project);
-            model.addAttribute("comment", comment);
-
-        } else {
-            ApprovalComment comment = new ApprovalComment("", false, null,null);
-            model.addAttribute("comment", comment);
-        }
-
-        model.addAttribute("username", SecurityContextHolder.getContext().getAuthentication().getName());
-        model.addAttribute("project", project);
-        model.addAttribute("readme", readmeContent);
-
-        model.addAttribute("repositoryTypeGithub", RepositoryType.GITHUB);
-        model.addAttribute("repositoryTypeGitlab", RepositoryType.GITLAB);
-
-        return "project-details";
     }
+
 
     @GetMapping("/projects/delete/{id}")
     public String deleteProject(@PathVariable Long id) {
