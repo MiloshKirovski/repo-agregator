@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import mk.ukim.finki.wp.repoagregator.model.*;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.ProjectStatus;
 import mk.ukim.finki.wp.repoagregator.model.enumerations.RepositoryType;
+import mk.ukim.finki.wp.repoagregator.model.exceptions.ProfessorNotFoundException;
 import mk.ukim.finki.wp.repoagregator.model.exceptions.ProjectNotFoundException;
 import mk.ukim.finki.wp.repoagregator.repository.*;
 import mk.ukim.finki.wp.repoagregator.service.ProjectService;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -85,14 +85,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<Project> findAllByMentor(String mentorId) {
-        Professor professor = professorRepository.findByid(mentorId).orElseThrow(RuntimeException::new);
+        Professor professor = professorRepository.findByid(mentorId).orElseThrow(ProfessorNotFoundException::new);
         System.out.println(professor.getId());
         return projectRepository.findAllByMentorsContaining(professor);
     }
 
     @Override
     public Project update(Long projectId, ProjectStatus projectStatus, ApprovalComment approvalComment) {
-        Project projectMain =  projectRepository.findById(projectId).orElseThrow(RuntimeException::new);
+        Project projectMain =  projectRepository.findById(projectId).orElseThrow(ProjectNotFoundException::new);
         projectMain.setProjectStatus(projectStatus);
         projectMain.setApprovalComment(approvalComment);
         return projectRepository.save(projectMain);
