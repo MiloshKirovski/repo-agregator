@@ -23,7 +23,9 @@ public interface ProjectService {
     Project findById(Long id);
     List<Project> findAllByStudent(Student student);
     List<Project> findAllByMentor(String mentorId);
+    List<Project>findAllBySubject(String courseId);
     Project update(Long projectId, ProjectStatus projectStatus, ApprovalComment approvalComment);
+
     Page<Project> findPage(String search, String course, Integer year, Integer pageNum, Integer pageSize);
     void deleteProject(Long projectId);
     Optional<Project> update(

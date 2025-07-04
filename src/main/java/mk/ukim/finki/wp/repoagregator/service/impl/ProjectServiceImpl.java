@@ -91,6 +91,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public List<Project> findAllBySubject(String subjectId) {
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(RuntimeException::new);
+        return projectRepository.findAllBySubjectsContaining(subject);
+    }
+
+    @Override
     public Project update(Long projectId, ProjectStatus projectStatus, ApprovalComment approvalComment) {
         Project projectMain =  projectRepository.findById(projectId).orElseThrow(ProjectNotFoundException::new);
         projectMain.setProjectStatus(projectStatus);
