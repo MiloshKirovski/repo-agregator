@@ -8,12 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SeleniumConfig.class)
-
-
 public abstract class BaseSeleniumTest {
 
     @LocalServerPort
@@ -22,11 +19,8 @@ public abstract class BaseSeleniumTest {
     @Autowired
     protected WebDriver driver;
 
-    protected String baseUrl;
-
     @BeforeEach
     void setUp() {
-        baseUrl = "http://localhost:" + port;
         driver.manage().window().maximize();
     }
 
@@ -38,6 +32,6 @@ public abstract class BaseSeleniumTest {
     }
 
     protected String getUrl(String path) {
-        return baseUrl + path;
+        return "http://localhost:" + port + path;
     }
 }

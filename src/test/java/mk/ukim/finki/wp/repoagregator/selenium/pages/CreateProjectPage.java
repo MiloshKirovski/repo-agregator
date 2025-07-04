@@ -1,5 +1,7 @@
 package mk.ukim.finki.wp.repoagregator.selenium.pages;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -7,6 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.ElementClickInterceptedException;
 import java.time.Duration;
 import java.util.List;
 
@@ -17,7 +21,7 @@ public class CreateProjectPage {
     @FindBy(css = "h1.display-4")
     private WebElement pageTitle;
 
-    @FindBy(css = ".lead")
+    @FindBy(css = ".intro")
     private WebElement pageSubtitle;
 
     @FindBy(name = "name")
@@ -29,26 +33,28 @@ public class CreateProjectPage {
     @FindBy(name = "description")
     private WebElement descriptionTextarea;
 
-    @FindBy(name = "courses")
+    @FindBy(name = "courseIds")
     private WebElement coursesSelect;
 
-    @FindBy(name = "mentors")
+    @FindBy(name = "mentorIds")
     private WebElement mentorsSelect;
 
-    @FindBy(name = "teamMembers")
+    @FindBy(name = "teamMemberIds")
     private WebElement teamMembersSelect;
 
-    @FindBy(name = "repositoryUrl")
+    @FindBy(name = "repoLink")
     private WebElement repositoryUrlField;
 
-    @FindBy(css = "button[type='submit'].btn-success")
+    @FindBy(css = "button[type='submit'].btn-primary")
     private WebElement createProjectButton;
 
     @FindBy(css = ".btn.btn-secondary[href*='projects']")
     private WebElement cancelButton;
 
-    @FindBy(css = ".form-text.text-muted")
+    @FindBy(css = ".form-text")
     private List<WebElement> helpTexts;
+    @FindBy(css = "body > div > div > div > div.project-header > h1")
+    private WebElement succefulSubmission;
 
     @FindBy(css = ".invalid-feedback")
     private List<WebElement> validationMessages;
@@ -83,22 +89,54 @@ public class CreateProjectPage {
     }
 
     public void selectCourse(String course) {
-        wait.until(ExpectedConditions.visibilityOf(coursesSelect));
-        Select select = new Select(coursesSelect);
-        select.selectByVisibleText(course);
+        selectFromSelect2("courseIds", course);
     }
 
     public void selectMentor(String mentor) {
-        wait.until(ExpectedConditions.visibilityOf(mentorsSelect));
-        Select select = new Select(mentorsSelect);
-        select.selectByVisibleText(mentor);
+        selectFromSelect2("mentorIds", mentor);
     }
 
     public void selectTeamMember(String teamMember) {
-        wait.until(ExpectedConditions.visibilityOf(teamMembersSelect));
-        Select select = new Select(teamMembersSelect);
-        select.selectByVisibleText(teamMember);
+        selectFromSelect2("teamMemberIds", teamMember);
     }
+
+    private void selectFromSelect2(String selectId, String optionText) {
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.name(selectId)));
+
+            WebElement select2Container = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.xpath("//select[@name='" + selectId + "']/following-sibling::span[contains(@class, 'select2-container')]")));
+
+            WebElement select2Selection = select2Container.findElement(By.cssSelector(".select2-selection"));
+
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",
+                    select2Selection
+            );            Thread.sleep(300);
+
+            wait.until(ExpectedConditions.elementToBeClickable(select2Selection));
+            select2Selection.click();
+
+            wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector(".select2-dropdown .select2-results")));
+
+            WebElement searchBox = wait.until(ExpectedConditions.presenceOfElementLocated(
+                    By.cssSelector(".select2-search__field")));
+            searchBox.clear();
+            searchBox.sendKeys(optionText);
+
+            WebElement option = wait.until(ExpectedConditions.elementToBeClickable(
+                    By.xpath("//li[contains(@class, 'select2-results__option') and contains(text(), '" + optionText + "')]")));
+            option.click();
+
+            driver.findElement(By.tagName("body")).click();
+
+        } catch (Exception e) {
+            System.out.println("Select2 selection failed for " + selectId + " with text '" + optionText + "'");
+            e.printStackTrace();
+        }
+    }
+
 
     public void enterRepositoryUrl(String repositoryUrl) {
         wait.until(ExpectedConditions.visibilityOf(repositoryUrlField));
@@ -107,8 +145,23 @@ public class CreateProjectPage {
     }
 
     public void clickCreateProject() {
-        wait.until(ExpectedConditions.elementToBeClickable(createProjectButton));
-        createProjectButton.click();
+        try {
+            driver.findElement(By.tagName("body")).click();
+            Thread.sleep(200);
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", createProjectButton);
+            Thread.sleep(300);
+
+            wait.until(ExpectedConditions.elementToBeClickable(createProjectButton));
+
+            createProjectButton.click();
+
+        } catch (ElementClickInterceptedException e) {
+            System.out.println("Normal click intercepted, trying JavaScript click");
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", createProjectButton);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void clickCancel() {
@@ -117,7 +170,7 @@ public class CreateProjectPage {
     }
 
     public void createProject(String name, String year, String description,
-                              String course, String mentor, String teamMember, String repoUrl) {
+                              String course, String mentor, String teamMember, String repoUrl) throws InterruptedException {
         enterProjectName(name);
         enterYear(year);
         enterDescription(description);
@@ -128,15 +181,12 @@ public class CreateProjectPage {
         clickCreateProject();
     }
 
-    public boolean hasValidationErrors() {
-        return !validationMessages.isEmpty() &&
-                validationMessages.stream().anyMatch(WebElement::isDisplayed);
+    public boolean successfulCreation() {
+        return wait.until(ExpectedConditions.visibilityOf(succefulSubmission))
+                .getText()
+                .trim()
+                .equals("Студентски Проекти");
     }
 
-    public String getValidationMessage(int index) {
-        if (index < validationMessages.size() && validationMessages.get(index).isDisplayed()) {
-            return validationMessages.get(index).getText();
-        }
-        return "";
-    }
+
 }
