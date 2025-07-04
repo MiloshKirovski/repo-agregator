@@ -47,7 +47,7 @@ public class GitLabServiceImpl implements GitLabService {
             String encodedProjectPath = namespace + "%2F" + project;
 
             String completeUrl = apiBase + "/projects/" + encodedProjectPath + "/repository/files/README.md?ref=HEAD";
-            URI uri = URI.create(completeUrl);
+            URI uri = URI.create(completeUrl); // throws IllegalArgumentException
 
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(List.of(MediaType.APPLICATION_JSON));
@@ -55,7 +55,7 @@ public class GitLabServiceImpl implements GitLabService {
 
             HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
-            ResponseEntity<Map> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, Map.class);
+            ResponseEntity<Map> response = restTemplate.exchange(uri, HttpMethod.GET, requestEntity, Map.class); // throws Exception
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
@@ -65,8 +65,8 @@ public class GitLabServiceImpl implements GitLabService {
 
                     base64Content = base64Content.replaceAll("\\s", "");
 
-                    byte[] decodedBytes = Base64.getDecoder().decode(base64Content);
-                    String content = new String(decodedBytes, StandardCharsets.UTF_8);
+                    byte[] decodedBytes = Base64.getDecoder().decode(base64Content); // throws IllegalArgumentException
+                    String content = new String(decodedBytes, StandardCharsets.UTF_8); // throws Exception
 
                     return content;
                 } else {
