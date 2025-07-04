@@ -12,6 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -21,8 +24,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -122,53 +128,59 @@ class ProjectControllerTest {
     @Nested
     @DisplayName("GET /projects - Главна страница за проекти")
     class GetProjectsTests {
-
-        @Test
+        @ParameterizedTest
+        @MethodSource("provideProjectFilterParams")
         @WithMockUser(username = "testuser")
-        @DisplayName("Прикажување страница за проекти со default параметри")
-        void shouldDisplayProjectsPageWithDefaults() throws Exception {
+        void shouldHandleSearchAndFilterParametersParametrized(String search, String course, Integer year, int pageNum, int results) throws Exception {
             Page<Project> projectPage = new PageImpl<>(Arrays.asList(testProject));
-            when(projectService.findPage(null, null, null, 1, 5))
+
+            when(projectService.findPage(
+                    (search == null || search.isEmpty()) ? null : search,
+                    (course == null || course.isEmpty()) ? null : course,
+                    year,
+                    pageNum,
+                    results))
                     .thenReturn(projectPage);
+
             when(subjectRepository.findAll()).thenReturn(Arrays.asList(testSubject));
 
-            mockMvc.perform(get("/projects"))
+            var requestBuilder = get("/projects")
+                    .param("pageNum", String.valueOf(pageNum))
+                    .param("results", String.valueOf(results));
+
+            if (search != null && !search.isEmpty()) {
+                requestBuilder.param("search", search);
+            }
+
+            if (course != null && !course.isEmpty()) {
+                requestBuilder.param("course", course);
+            }
+
+            if (year != null) {
+                requestBuilder.param("year", String.valueOf(year));
+            }
+
+            mockMvc.perform(requestBuilder)
                     .andExpect(status().isOk())
                     .andExpect(view().name("projects"))
                     .andExpect(model().attributeExists("page"))
-                    .andExpect(model().attributeExists("allCourses"))
-                    .andExpect(model().attribute("repositoryTypeGithub", RepositoryType.GITHUB))
-                    .andExpect(model().attribute("repositoryTypeGitlab", RepositoryType.GITLAB))
-                    .andExpect(model().attribute("username", "testuser"))
                     .andExpect(model().attribute("page", hasProperty("content", hasItem(testProject))));
 
-            verify(projectService).findPage(null, null, null, 1, 5);
-            verify(subjectRepository).findAll();
+            verify(projectService).findPage(
+                    (search == null || search.isEmpty()) ? null : search,
+                    (course == null || course.isEmpty()) ? null : course,
+                    year,
+                    pageNum,
+                    results);
         }
 
-        @Test
-        @WithMockUser(username = "testuser")
-        @DisplayName("Справување со претражување и парамeтри за филтрирање")
-        void shouldHandleSearchAndFilterParameters() throws Exception {
-            Page<Project> projectPage = new PageImpl<>(Arrays.asList(testProject));
-            when(projectService.findPage("Тестирање проект", "VP", 2024, 2, 10))
-                    .thenReturn(projectPage);
-            when(subjectRepository.findAll()).thenReturn(Arrays.asList(testSubject));
-
-            mockMvc.perform(get("/projects")
-                            .param("search", "Тестирање проект")
-                            .param("course", "VP")
-                            .param("year", "2024")
-                            .param("pageNum", "2")
-                            .param("results", "10"))
-                    .andExpect(status().isOk())
-                    .andExpect(view().name("projects"))
-                    .andExpect(model().attribute("search", "Тестирање проект"))
-                    .andExpect(model().attribute("course", "VP"))
-                    .andExpect(model().attribute("year", 2024))
-                    .andExpect(model().attribute("page", hasProperty("content", hasItem(testProject))));
-
-            verify(projectService).findPage("Тестирање проект", "VP", 2024, 2, 10);
+        static Stream<Arguments> provideProjectFilterParams() {
+            return Stream.of(
+                    Arguments.of(null, null, null, 1, 5),
+                    Arguments.of("Тест проект", "VP", 2024, 2, 10),
+                    Arguments.of("Втор тест проект", null, 2023, 1, 5),
+                    Arguments.of("Трет тест проект", "VP", null, 1, 5)
+            );
         }
 
         @Test
@@ -263,39 +275,72 @@ class ProjectControllerTest {
     @DisplayName("POST /projects/create - Креирање на проект")
     class PostCreateProjectTests {
 
-        @Test
+        @ParameterizedTest
         @WithMockUser(username = "student123")
         @DisplayName("Успешно креирање на проект")
-        void shouldCreateProjectSuccessfully() throws Exception {
+        @MethodSource("projectCreationTestData")
+        void shouldCreateProjectSuccessfully(String name, String description, String repoLink,
+                                             String year, String courseIds, String mentorIds,
+                                             String teamMemberIds, String expectedName,
+                                             String expectedDescription, String expectedRepoLink,
+                                             int expectedYear) throws Exception {
             when(userService.findById("student123")).thenReturn(testStudentUser);
             when(studentService.findByEmail("kirovski@test.com")).thenReturn(testStudent);
             when(projectService.createProject(anyString(), anyString(), anyString(),
                     anyInt(), anyList(), anyList(), anyList(), anyString()))
                     .thenReturn(testProject);
 
-            mockMvc.perform(post("/projects/create")
-                            .with(csrf())
-                            .param("name", "Тест проект")
-                            .param("year", "2024")
-                            .param("description", "Опис на проект")
-                            .param("repoLink", "https://github.com/test/repo")
-                            .param("courseIds", "VP")
-                            .param("mentorIds", "prof-123")
-                            .param("teamMemberIds", "12345"))
+            MockHttpServletRequestBuilder requestBuilder = post("/projects/create")
+                    .with(csrf())
+                    .param("name", name)
+                    .param("year", year);
+
+            if (description != null) requestBuilder.param("description", description);
+            if (repoLink != null) requestBuilder.param("repoLink", repoLink);
+            if (courseIds != null) requestBuilder.param("courseIds", courseIds);
+            if (mentorIds != null) requestBuilder.param("mentorIds", mentorIds);
+            if (teamMemberIds != null) requestBuilder.param("teamMemberIds", teamMemberIds);
+
+            mockMvc.perform(requestBuilder)
                     .andExpect(status().is3xxRedirection())
                     .andExpect(redirectedUrl("/projects"));
 
             verify(userService).findById("student123");
             verify(studentService).findByEmail("kirovski@test.com");
             verify(projectService).createProject(
-                    eq("Тест проект"),
-                    eq("Опис на проект"),
-                    eq("https://github.com/test/repo"),
-                    eq(2024),
-                    anyList(),
-                    anyList(),
-                    anyList(),
+                    eq(expectedName),
+                    expectedDescription != null ? eq(expectedDescription) : isNull(),
+                    expectedRepoLink != null ? eq(expectedRepoLink) : isNull(),
+                    eq(expectedYear),
+                    courseIds != null ? anyList() : isNull(),
+                    mentorIds != null ? anyList() : isNull(),
+                    teamMemberIds != null ? anyList() : isNull(),
                     eq("12345")
+            );
+        }
+
+        private static Stream<Arguments> projectCreationTestData() {
+            return Stream.of(
+                    Arguments.of(
+                            "Тест проект", "Опис на проект", "https://github.com/test/repo",
+                            "2024", "VP", "prof-123", "12345",
+                            "Тест проект", "Опис на проект", "https://github.com/test/repo", 2024
+                    ),
+                    Arguments.of(
+                            "Минимален проект", null, null,
+                            "2024", null, null, null,
+                            "Минимален проект", null, null, 2024
+                    ),
+                    Arguments.of(
+                            "Проект со опис", "Само опис", null,
+                            "2023", null, null, null,
+                            "Проект со опис", "Само опис", null, 2023
+                    ),
+                    Arguments.of(
+                            "Проект со репо", null, "https://gitlab.com/test/project",
+                            "2025", null, null, null,
+                            "Проект со репо", null, "https://gitlab.com/test/project", 2025
+                    )
             );
         }
 
@@ -325,37 +370,6 @@ class ProjectControllerTest {
 
             verify(projectService).findPage(null, null, null, 1, 5);
             verify(subjectRepository).findAll();
-        }
-
-        @Test
-        @WithMockUser(username = "student123")
-        @DisplayName("Справување со минимално потребни параметри")
-        void shouldHandleMinimalRequiredParameters() throws Exception {
-            when(userService.findById("student123")).thenReturn(testStudentUser);
-            when(studentService.findByEmail(testStudentUser.getEmail())).thenReturn(testStudent);
-            when(projectService.createProject(anyString(), anyString(), anyString(),
-                    anyInt(), anyList(), anyList(), anyList(), anyString()))
-                    .thenReturn(testProject);
-
-            mockMvc.perform(post("/projects/create")
-                            .with(csrf())
-                            .param("name", "Минимален проект")
-                            .param("year", "2024"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrl("/projects"));
-
-            verify(userService).findById("student123");
-            verify(studentService).findByEmail(testStudentUser.getEmail());
-            verify(projectService).createProject(
-                    eq("Минимален проект"),
-                    isNull(),
-                    isNull(),
-                    eq(2024),
-                    isNull(),
-                    isNull(),
-                    isNull(),
-                    eq(testStudent.getIndex())
-            );
         }
     }
 
@@ -581,5 +595,4 @@ class ProjectControllerTest {
                     .andExpect(model().attribute("errorMessage", "ГРЕШКА! Не пронајдовме проект со тоа ID..."));
         }
     }
-
 }

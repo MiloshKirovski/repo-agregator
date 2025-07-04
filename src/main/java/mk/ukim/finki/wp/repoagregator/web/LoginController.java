@@ -12,11 +12,11 @@ public class LoginController {
                         @RequestParam(value = "error", required = false) String error,
                         @RequestParam(value = "logout", required = false) String logout) {
 
-        if (error != null) {
+        if (error != null && error.equals("true")) {
             model.addAttribute("errorMessage", "Неточно корисничко име или лозинка");
         }
 
-        if (logout != null) {
+        if (logout != null && logout.equals("true")) {
             model.addAttribute("logoutMessage", "Успешно се одјавивте");
         }
 
