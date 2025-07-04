@@ -31,31 +31,34 @@ public class ProjectManagementTest extends BaseSeleniumTest {
     }
 
     @Test
-    void testSearchFunctionality() {
+    void testSearchFunctionality() throws InterruptedException {
         driver.get(getUrl("/projects"));
 
         projectsPage.searchProjects("Project 1");
+        Thread.sleep(1000);
 
         assertThat(driver.getCurrentUrl()).contains("search=Project+1");
     }
 
     @Test
-    void testFilterByCourse() {
+    void testFilterByCourse() throws InterruptedException {
         driver.get(getUrl("/projects"));
 
 
         projectsPage.filterByCourse("F23L2W096");
 
         assertThat(driver.getCurrentUrl()).contains("course=F23L2W096");
+        Thread.sleep(1000);
 
         assertEquals("F23L2W096", projectsPage.getSelectedCourseValue());
     }
 
     @Test
-    void testFilterByYear() {
+    void testFilterByYear() throws InterruptedException {
         driver.get(getUrl("/projects"));
 
         projectsPage.filterByYear("2024");
+        Thread.sleep(1000);
 
         assertThat(driver.getCurrentUrl()).contains("year=2024");
     }
@@ -70,7 +73,7 @@ public class ProjectManagementTest extends BaseSeleniumTest {
     }
 
     @Test
-    void testProjectDetailsNavigation() {
+    void testProjectDetailsNavigation() throws InterruptedException {
         driver.get(getUrl("/projects"));
 
         if (projectsPage.getProjectCount() > 0) {

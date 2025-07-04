@@ -1,6 +1,7 @@
 package mk.ukim.finki.wp.repoagregator.selenium.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -49,6 +50,8 @@ public class ProjectPage {
 
     @FindBy(css = ".btn.btn-success[href*='create']")
     private WebElement createNewProjectButton;
+    @FindBy(css = "div.project-header h1")
+    private WebElement detailsButton;
 
     public ProjectPage(WebDriver driver) {
         this.driver = driver;
@@ -67,13 +70,14 @@ public class ProjectPage {
         searchField.sendKeys(searchTerm);
         filterButton.click();
     }
-    public void filterByCourse(String courseId) {
+    public void filterByCourse(String courseId) throws InterruptedException {
         wait.until(ExpectedConditions.elementToBeClickable(courseSelect));
 
         Select courseDropdown = new Select(courseSelect);
         courseDropdown.selectByValue(courseId);
 
         filterButton.click();
+        Thread.sleep(1000);
     }
 
 
@@ -113,12 +117,24 @@ public class ProjectPage {
         }
     }
 
-    public void clickProjectDetails(int projectIndex) {
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".card.mb-4")));
-        WebElement projectCard = projectCardElements.get(projectIndex);
-        WebElement detailsButton = projectCard.findElement(By.cssSelector(".btn.btn-info"));
-        detailsButton.click();
+    public void clickProjectDetails(int projectIndex) throws InterruptedException {
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".card.horizontal-card")));
+
+        List<WebElement> projectCards = driver.findElements(By.cssSelector(".card.horizontal-card"));
+
+        if (projectIndex >= projectCards.size()) {
+            throw new IndexOutOfBoundsException("Invalid project index: " + projectIndex);
+        }
+
+        WebElement projectCard = projectCards.get(projectIndex);
+        WebElement detailsBtn = projectCard.findElement(By.cssSelector("a.btn.btn-outline-primary"));
+
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", detailsBtn);
+        Thread.sleep(1000);
+        wait.until(ExpectedConditions.elementToBeClickable(detailsBtn));
+        detailsBtn.click();
     }
+
 
     public String getProjectTitle(int projectIndex) {
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".card.mb-4")));

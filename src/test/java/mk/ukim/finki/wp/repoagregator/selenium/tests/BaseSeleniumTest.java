@@ -20,7 +20,7 @@ public abstract class BaseSeleniumTest {
     protected WebDriver driver;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InterruptedException {
         driver.manage().window().maximize();
     }
 

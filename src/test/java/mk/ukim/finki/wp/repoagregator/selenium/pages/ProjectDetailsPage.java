@@ -17,13 +17,13 @@ public class ProjectDetailsPage {
     @FindBy(css = ".btn.btn-secondary[href*='projects']")
     private WebElement backToProjectsButton;
 
-    @FindBy(css = "h1.display-4")
+    @FindBy(css = "body > div > div > div.project-header > div > h1")
     private WebElement projectTitle;
 
-    @FindBy(css = ".badge.badge-secondary")
+    @FindBy(css = "body > div > div > div.project-header > div > div > span")
     private WebElement yearBadge;
 
-    @FindBy(css = ".btn.btn-outline-primary[href*='github']")
+    @FindBy(css = "body > div > div > div.project-header > div > div > a")
     private List<WebElement> repositoryLinks;
 
     @FindBy(css = "h3")
@@ -74,8 +74,8 @@ public class ProjectDetailsPage {
         PageFactory.initElements(driver, this);
     }
 
-    public boolean isPageLoaded() {
-        return wait.until(ExpectedConditions.visibilityOf(projectTitle)).isDisplayed();
+    public String isPageLoaded() {
+        return wait.until(ExpectedConditions.visibilityOf(projectTitle)).getText();
     }
 
     public void clickBackToProjects() {
