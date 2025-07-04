@@ -11,7 +11,5 @@ public interface ProfessorService {
 
     Professor getProfessorById(String id);
 
-    List<Professor> listAllProfessors(String professorName);
-
     List<Professor> findAll();
 }

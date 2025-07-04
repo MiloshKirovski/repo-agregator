@@ -25,27 +25,6 @@ public class ProfessorServiceImpl implements ProfessorService {
                 .orElseThrow(() -> new ProfessorNotFoundException("Professor with id " + id + " doesn't exist"));
     }
 
-    @Override
-    public List<Professor> listAllProfessors(String professorName) {
-        Specification<Professor> spec = Specification.where(null);
-        if(professorName!=null && !professorName.isEmpty()){
-            Specification<Professor> nameSpec = filterContainsText(Professor.class, "name", professorName);
-            Specification<Professor> idSpec = filterContainsText(Professor.class, "id", professorName);
-
-            spec = spec.and(nameSpec.or(idSpec));
-        }
-
-        Specification<Professor> excludeSpec = (root, query, criteriaBuilder) -> {
-            Predicate notDemonstrator = criteriaBuilder.notLike(root.get("name"), "%Демонстратор%");
-            Predicate notIndustry = criteriaBuilder.notLike(root.get("name"), "%Индустрија%");
-            return criteriaBuilder.and(notDemonstrator, notIndustry);
-        };
-
-        spec = spec.and(excludeSpec);
-
-        return professorRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "name"));
-    }
-
     public List<Professor> findAll() {
         return professorRepository.findAll();
     }
