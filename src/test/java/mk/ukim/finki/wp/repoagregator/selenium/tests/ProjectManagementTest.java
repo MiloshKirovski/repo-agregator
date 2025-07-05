@@ -55,6 +55,7 @@ public class ProjectManagementTest extends BaseSeleniumTest {
 
     @Test
     void testFilterByYear() throws InterruptedException {
+
         driver.get(getUrl("/projects"));
 
         projectsPage.filterByYear("2024");

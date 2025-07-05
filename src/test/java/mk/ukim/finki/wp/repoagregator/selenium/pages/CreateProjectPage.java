@@ -182,6 +182,7 @@ public class CreateProjectPage {
     }
 
     public boolean successfulCreation() {
+
         return wait.until(ExpectedConditions.visibilityOf(succefulSubmission))
                 .getText()
                 .trim()

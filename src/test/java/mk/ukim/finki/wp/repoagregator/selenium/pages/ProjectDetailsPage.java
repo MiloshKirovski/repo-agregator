@@ -76,6 +76,7 @@ public class ProjectDetailsPage {
 
     public String isPageLoaded() {
         return wait.until(ExpectedConditions.visibilityOf(projectTitle)).getText();
+
     }
 
     public void clickBackToProjects() {

@@ -27,6 +27,7 @@ public class CreateProjectPageTest extends BaseSeleniumTest {
 
     @Test
     void testCreateProjectWithValidData() throws InterruptedException {
+
         createProjectPage.createProject(
                 "Selenium Test Project 3",
                 "2025",

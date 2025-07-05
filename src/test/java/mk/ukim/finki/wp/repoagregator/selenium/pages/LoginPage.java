@@ -64,6 +64,7 @@ public class LoginPage {
     }
 
     public void login(String username, String password) {
+
         enterUsername(username);
         enterPassword(password);
         clickLoginButton();

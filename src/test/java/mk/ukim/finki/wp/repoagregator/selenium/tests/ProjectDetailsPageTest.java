@@ -29,6 +29,7 @@ public class ProjectDetailsPageTest extends BaseSeleniumTest {
     @Test
     void testPageLoads() {
         assertThat(projectDetailsPage.isPageLoaded()).isNotEmpty();
+
     }
 
     @Test

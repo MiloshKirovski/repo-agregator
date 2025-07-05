@@ -82,6 +82,7 @@ public class ProjectPage {
 
 
     public boolean isCourseOptionAvailable(String courseId) {
+
         Select courseDropdown = new Select(courseSelect);
         return courseDropdown.getOptions().stream()
                 .anyMatch(option -> option.getAttribute("value").equals(courseId));

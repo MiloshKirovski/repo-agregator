@@ -27,5 +27,6 @@ public class LoginTest extends BaseSeleniumTest{
 
       assertThat(loginPage.successfulLogin()).isTrue();
 
+
     }
 }

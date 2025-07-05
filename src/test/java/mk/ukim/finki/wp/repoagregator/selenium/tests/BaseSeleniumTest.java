@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.openqa.selenium.Dimension;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SeleniumConfig.class)
@@ -19,9 +20,10 @@ public abstract class BaseSeleniumTest {
     @Autowired
     protected WebDriver driver;
 
+
     @BeforeEach
     void setUp() throws InterruptedException {
-        driver.manage().window().maximize();
+        driver.manage().window().fullscreen();
     }
 
     @AfterEach
