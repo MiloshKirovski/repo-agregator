@@ -1,10 +1,14 @@
 package mk.ukim.finki.wp.repoagregator.selenium.tests;
 
+import mk.ukim.finki.wp.repoagregator.selenium.pages.EditProjectPage;
 import mk.ukim.finki.wp.repoagregator.selenium.pages.MyProjectsPage;
 import mk.ukim.finki.wp.repoagregator.selenium.pages.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +51,28 @@ public class MyProjectsPageTest extends BaseSeleniumTest {
         if (myProjectsPage.getProjectCount() > 0 ) {
             myProjectsPage.clickEditProject(0);
             assertThat(driver.getCurrentUrl()).matches(".*/projects/edit/\\d+");        }
+    }
+    @Test
+    void testEditAndSaveProject() throws InterruptedException {
+        if (myProjectsPage.getProjectCount() > 0) {
+            myProjectsPage.clickEditProject(0);
+
+            EditProjectPage editPage = new EditProjectPage(driver);
+
+            String newName = "Updated Project " + System.currentTimeMillis();
+            editPage.updateProjectName(newName);
+
+            String newDesc = "Updated description at " + System.currentTimeMillis();
+            editPage.updateDescription(newDesc);
+
+            String newRepo = "https://github.com/test/project-" + System.currentTimeMillis();
+            editPage.updateRepoLink(newRepo);
+
+            editPage.submit();
+
+            assertThat(myProjectsPage.getLastProjectTitle()).isEqualTo(newName);
+
+        }
     }
 
     @Test

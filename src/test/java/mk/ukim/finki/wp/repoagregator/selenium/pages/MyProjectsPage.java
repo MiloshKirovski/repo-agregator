@@ -234,6 +234,11 @@ public class MyProjectsPage {
 
         return comment;
     }
+    public String getLastProjectTitle() {
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".card-title")));
+        return projectTitles.get(projectTitles.size() - 1).getText();
+    }
+
     public String getCommentOfLastProject() {
         List<WebElement> textareas = driver.findElements(By.name("comment"));
         if (textareas.isEmpty()) {
@@ -245,6 +250,7 @@ public class MyProjectsPage {
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", last);
         return last.getAttribute("value").trim();
     }
+
 
 
 
