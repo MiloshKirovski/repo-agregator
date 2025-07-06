@@ -4,6 +4,9 @@ import mk.ukim.finki.wp.repoagregator.selenium.pages.ProjectPage;
 import mk.ukim.finki.wp.repoagregator.selenium.pages.LoginPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,17 +32,20 @@ public class ProjectManagementTest extends BaseSeleniumTest {
         assertThat(driver.getCurrentUrl()).contains("/projects");
     }
 
-    @Test
-    void testSearchFunctionality() throws InterruptedException {
+    @ParameterizedTest
+    @ValueSource(strings = {"LONGPROJETNAMELONGPROJETNAMELONGPROJETNAMELONGPROJETNAMELONGPROJETNAMELONGPROJETNAME", "ShortName", " "})
+    void testSearchFunctionality(String searchTerm) throws InterruptedException {
         driver.get(getUrl("/projects"));
-
-        projectsPage.searchProjects("Project 1");
+        projectsPage.searchProjects(searchTerm);
         Thread.sleep(1000);
+        if(searchTerm.equals(" ")){
+            assertThat(driver.getCurrentUrl()).contains("search=");
 
-        assertThat(driver.getCurrentUrl()).contains("search=Project+1");
-    }
-
-    @Test
+        }else {
+            assertThat(driver.getCurrentUrl()).contains("search=" + searchTerm);
+        }
+        }
+   @Test
     void testFilterByCourse() throws InterruptedException {
         driver.get(getUrl("/projects"));
 
@@ -49,18 +55,24 @@ public class ProjectManagementTest extends BaseSeleniumTest {
         assertThat(driver.getCurrentUrl()).contains("course=F23L2W096");
         Thread.sleep(1000);
 
+
         assertEquals("F23L2W096", projectsPage.getSelectedCourseValue());
     }
-
-    @Test
-    void testFilterByYear() throws InterruptedException {
+    @ParameterizedTest
+    @ValueSource(strings = {"2024", "202520252025", " "})
+    void testFilterByYear(String searchTerm) throws InterruptedException {
 
         driver.get(getUrl("/projects"));
 
-        projectsPage.filterByYear("2024");
+        projectsPage.filterByYear(searchTerm);
         Thread.sleep(1000);
 
-        assertThat(driver.getCurrentUrl()).contains("year=2024");
+        if(searchTerm.equals(" ")){
+            assertThat(driver.getCurrentUrl()).contains("year=");
+
+        }else {
+            assertThat(driver.getCurrentUrl()).contains("year=" + searchTerm);
+        }
     }
     @Test
     void testCombinedFilteringFunctionality() throws InterruptedException {
@@ -82,7 +94,6 @@ public class ProjectManagementTest extends BaseSeleniumTest {
 
         assertEquals("F23L2W096", projectsPage.getSelectedCourseValue());
     }
-
 
     @Test
     void testAddNewProjectNavigation() {

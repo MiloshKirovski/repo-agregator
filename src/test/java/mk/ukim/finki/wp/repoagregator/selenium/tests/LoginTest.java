@@ -4,6 +4,8 @@ import mk.ukim.finki.wp.repoagregator.selenium.pages.LoginPage;
 import mk.ukim.finki.wp.repoagregator.selenium.pages.MyProjectsPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -15,18 +17,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class LoginTest extends BaseSeleniumTest{
     private LoginPage loginPage;
-    private MyProjectsPage myProjectsPage;
 
     @BeforeEach
     void setUpPages() {
         loginPage = new LoginPage(driver);
 
     }
-    @Test
-    void testLogin() {
+    @ParameterizedTest
+    @ValueSource(strings = {"221071", "riste.stojanov"})
+    void testLogin(String searchTerm) {
         driver.get(getUrl("/login"));
         assertThat(loginPage.isPageLoaded()).isTrue();
-    loginPage.login("riste.stojanov", "SystemPass");
+    loginPage.login(searchTerm, "SystemPass");
 
       assertThat(loginPage.successfulLogin()).isTrue();
 
@@ -42,7 +44,8 @@ public class LoginTest extends BaseSeleniumTest{
         assertThat(loginPage.isErrorAlertDisplayed()).isTrue();
         assertThat(loginPage.getErrorMessage()).contains("Неточно корисничко име или лозинка");
     }
-    @Test
+
+
     void testLogoutSuccess() {
         driver.get(getUrl("/login"));
         assertThat(loginPage.isPageLoaded()).isTrue();
@@ -61,6 +64,5 @@ public class LoginTest extends BaseSeleniumTest{
 
         assertThat(successAlert.getText()).contains("Успешно се одјавивте");
     }
-
 
 }

@@ -6,11 +6,15 @@ import mk.ukim.finki.wp.repoagregator.selenium.pages.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 import java.time.Duration;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -163,19 +167,35 @@ public class MyProjectsPageTest extends BaseSeleniumTest {
         }
     }
 
-    @Test
-    void testProjectCommentUpdate() throws InterruptedException {
+    @ParameterizedTest
+    @MethodSource("commentTestData")
+    void testProjectCommentUpdate(String testData) throws InterruptedException {
         if (myProjectsPage.getProjectCount() > 0) {
             String originalTitle = myProjectsPage.getProjectTitle(0);
             System.out.println("Original title: " + originalTitle);
 
-            String comment = "Test comment " + System.currentTimeMillis();
-            myProjectsPage.updateProjectComment(0,comment);
+
+            String timestampedComment = testData;
+            myProjectsPage.updateProjectComment(0, timestampedComment);
 
             String actual = myProjectsPage.getCommentOfProjectByTitle(originalTitle);
-            assertThat(actual).isEqualTo(comment);
+            if(Objects.equals(testData, " ")) {
+                assertThat(actual).isEqualTo("");
+
+            }else {
+                assertThat(actual).isEqualTo(timestampedComment);
+            }
         }
     }
+
+    static Stream<String> commentTestData() {
+        return Stream.of(
+                new String("Simple comment "+ System.currentTimeMillis()),
+                new String("This is a very long comment that tests the system's ability to handle extended text input and storage"+System.currentTimeMillis()),
+                new String(" " )
+        );
+    }
+
 
     @Test
     void testProjectCountDisplay() {
