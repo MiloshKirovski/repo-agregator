@@ -5,7 +5,6 @@ import mk.ukim.finki.wp.repoagregator.selenium.pages.LoginPage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProjectManagementTest extends BaseSeleniumTest {
@@ -63,6 +62,27 @@ public class ProjectManagementTest extends BaseSeleniumTest {
 
         assertThat(driver.getCurrentUrl()).contains("year=2024");
     }
+    @Test
+    void testCombinedFilteringFunctionality() throws InterruptedException {
+        driver.get(getUrl("/projects"));
+
+        projectsPage.searchProjects("Project");
+        Thread.sleep(1000);
+
+        projectsPage.filterByCourse("F23L2W096");
+        Thread.sleep(1000);
+
+        projectsPage.filterByYear("2024");
+        Thread.sleep(1000);
+
+        String currentUrl = driver.getCurrentUrl();
+        assertThat(currentUrl).contains("search=Project");
+        assertThat(currentUrl).contains("course=F23L2W096");
+        assertThat(currentUrl).contains("year=2024");
+
+        assertEquals("F23L2W096", projectsPage.getSelectedCourseValue());
+    }
+
 
     @Test
     void testAddNewProjectNavigation() {

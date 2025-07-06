@@ -8,11 +8,8 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.ElementClickInterceptedException;
 import java.time.Duration;
-import java.util.List;
 
 public class CreateProjectPage {
     private final WebDriver driver;
@@ -20,9 +17,6 @@ public class CreateProjectPage {
 
     @FindBy(css = "h1.display-4")
     private WebElement pageTitle;
-
-    @FindBy(css = ".intro")
-    private WebElement pageSubtitle;
 
     @FindBy(name = "name")
     private WebElement projectNameField;
@@ -33,14 +27,6 @@ public class CreateProjectPage {
     @FindBy(name = "description")
     private WebElement descriptionTextarea;
 
-    @FindBy(name = "courseIds")
-    private WebElement coursesSelect;
-
-    @FindBy(name = "mentorIds")
-    private WebElement mentorsSelect;
-
-    @FindBy(name = "teamMemberIds")
-    private WebElement teamMembersSelect;
 
     @FindBy(name = "repoLink")
     private WebElement repositoryUrlField;
@@ -48,16 +34,9 @@ public class CreateProjectPage {
     @FindBy(css = "button[type='submit'].btn-primary")
     private WebElement createProjectButton;
 
-    @FindBy(css = ".btn.btn-secondary[href*='projects']")
-    private WebElement cancelButton;
-
-    @FindBy(css = ".form-text")
-    private List<WebElement> helpTexts;
     @FindBy(css = "body > div > div > div > div.project-header > h1")
     private WebElement succefulSubmission;
 
-    @FindBy(css = ".invalid-feedback")
-    private List<WebElement> validationMessages;
 
     public CreateProjectPage(WebDriver driver) {
         this.driver = driver;
@@ -164,10 +143,7 @@ public class CreateProjectPage {
         }
     }
 
-    public void clickCancel() {
-        wait.until(ExpectedConditions.elementToBeClickable(cancelButton));
-        cancelButton.click();
-    }
+
 
     public void createProject(String name, String year, String description,
                               String course, String mentor, String teamMember, String repoUrl) throws InterruptedException {

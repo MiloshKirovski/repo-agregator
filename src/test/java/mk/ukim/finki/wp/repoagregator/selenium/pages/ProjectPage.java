@@ -17,9 +17,6 @@ public class ProjectPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    @FindBy(css = "h1.display-4")
-    private WebElement pageTitle;
-
     @FindBy(css = "body > div > div > div > div.project-header > a")
     private WebElement addNewProjectButton;
 
@@ -34,24 +31,14 @@ public class ProjectPage {
     @FindBy(css = "button[type='submit']")
     private WebElement filterButton;
 
-    @FindBy(css = ".project-card")
-    private List<WebElement> projectCards;
 
     @FindBy(css = ".card.mb-4")
     private List<WebElement> projectCardElements;
 
+    @FindBy(css = ".card.horizontal-card")
+    private     List<WebElement> projectCards;
 
-    @FindBy(css = ".text-center h3")
-    private WebElement noProjectsTitle;
 
-
-    @FindBy(css = ".text-muted")
-    private WebElement noProjectsMessage;
-
-    @FindBy(css = ".btn.btn-success[href*='create']")
-    private WebElement createNewProjectButton;
-    @FindBy(css = "div.project-header h1")
-    private WebElement detailsButton;
 
     public ProjectPage(WebDriver driver) {
         this.driver = driver;
@@ -81,12 +68,6 @@ public class ProjectPage {
     }
 
 
-    public boolean isCourseOptionAvailable(String courseId) {
-
-        Select courseDropdown = new Select(courseSelect);
-        return courseDropdown.getOptions().stream()
-                .anyMatch(option -> option.getAttribute("value").equals(courseId));
-    }
     public String getSelectedCourseValue() {
         Select courseDropdown = new Select(courseSelect);
         return courseDropdown.getFirstSelectedOption().getAttribute("value");
@@ -109,19 +90,9 @@ public class ProjectPage {
         }
     }
 
-    public boolean isNoProjectsMessageDisplayed() {
-        try {
-            return wait.until(ExpectedConditions.visibilityOf(noProjectsTitle))
-                    .getText().contains("Не се пронајдени проекти");
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
     public void clickProjectDetails(int projectIndex) throws InterruptedException {
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".card.horizontal-card")));
-
-        List<WebElement> projectCards = driver.findElements(By.cssSelector(".card.horizontal-card"));
 
         if (projectIndex >= projectCards.size()) {
             throw new IndexOutOfBoundsException("Invalid project index: " + projectIndex);
@@ -136,18 +107,6 @@ public class ProjectPage {
         detailsBtn.click();
     }
 
-
-    public String getProjectTitle(int projectIndex) {
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".card.mb-4")));
-        WebElement projectCard = projectCardElements.get(projectIndex);
-        return projectCard.findElement(By.cssSelector(".card-title")).getText();
-    }
-
-    public String getProjectYear(int projectIndex) {
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector(".card.mb-4")));
-        WebElement projectCard = projectCardElements.get(projectIndex);
-        return projectCard.findElement(By.cssSelector(".badge.badge-secondary")).getText();
-    }
 
 
 }

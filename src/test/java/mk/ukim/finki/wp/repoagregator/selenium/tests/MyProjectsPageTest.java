@@ -6,6 +6,8 @@ import mk.ukim.finki.wp.repoagregator.selenium.pages.LoginPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 import java.time.Duration;
@@ -49,13 +51,71 @@ public class MyProjectsPageTest extends BaseSeleniumTest {
     @Test
     void testEditProjectNavigation() {
         if (myProjectsPage.getProjectCount() > 0 ) {
-            myProjectsPage.clickEditProject(0);
+            myProjectsPage.clickEditProject();
             assertThat(driver.getCurrentUrl()).matches(".*/projects/edit/\\d+");        }
     }
+
+    @Test
+    void testEditProjectWithInvalidName() throws InterruptedException {
+        if (myProjectsPage.getProjectCount() > 0) {
+            myProjectsPage.clickEditProject();
+            String currentUrl = driver.getCurrentUrl();
+
+            EditProjectPage editPage = new EditProjectPage(driver);
+            editPage.updateProjectName("");
+
+            String newDesc = "Invalid name test " + System.currentTimeMillis();
+            editPage.updateDescription(newDesc);
+
+            String newRepo = "https://github.com/test/invalid-name-check";
+            editPage.updateRepoLink(newRepo);
+
+            editPage.submit();
+
+            new WebDriverWait(driver, Duration.ofSeconds(3))
+                    .until(ExpectedConditions.urlToBe(currentUrl));
+
+            assertThat(driver.getCurrentUrl()).isEqualTo(currentUrl);
+        }
+    }
+    @Test
+    void testCancelEditProjectNavigatesToProjects() throws InterruptedException {
+        if (myProjectsPage.getProjectCount() > 0) {
+            myProjectsPage.clickEditProject();
+
+            EditProjectPage editPage = new EditProjectPage(driver);
+            editPage.cancelEdit();
+
+            new WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.urlContains("/projects"));
+
+            assertThat(driver.getCurrentUrl()).contains("/projects");
+        }
+    }
+
+
+
+
+    @Test
+    void testDeleteProject() throws InterruptedException {
+            int initialUiCount = myProjectsPage.getProjectCount();
+
+            myProjectsPage.clickDeleteProject(0);
+
+            int updatedUiCount = myProjectsPage.getProjectCount();
+            assertThat(updatedUiCount).isEqualTo(initialUiCount - 1);
+
+
+
+    }
+
     @Test
     void testEditAndSaveProject() throws InterruptedException {
         if (myProjectsPage.getProjectCount() > 0) {
-            myProjectsPage.clickEditProject(0);
+            String originalTitle = myProjectsPage.getProjectTitle(0);
+            System.out.println("Original title: " + originalTitle);
+
+            myProjectsPage.clickEditProject();
 
             EditProjectPage editPage = new EditProjectPage(driver);
 
@@ -70,47 +130,52 @@ public class MyProjectsPageTest extends BaseSeleniumTest {
 
             editPage.submit();
 
-            assertThat(myProjectsPage.getLastProjectTitle()).isEqualTo(newName);
+            Thread.sleep(2000);
 
+            String foundTitle = myProjectsPage.findProjectByTitle(newName);
+            assertThat(foundTitle).isNotNull();
+            assertThat(foundTitle).isEqualTo(newName);
         }
     }
 
-    @Test
-    void testDeleteProject() {
-            int initialUiCount = myProjectsPage.getProjectCount();
-
-            myProjectsPage.clickDeleteProject(0);
-
-            int updatedUiCount = myProjectsPage.getProjectCount();
-            assertThat(updatedUiCount).isEqualTo(initialUiCount - 1);
-
-
-
-    }
     @Test
     void testProjectStatusUpdate() throws InterruptedException {
-        if (myProjectsPage.getProjectCount() > 0) {
-            String initialStatus = myProjectsPage.changeStatusOfFirstProject();
-            String updatedStatus = myProjectsPage.getStatusOfLastProject();
 
-            assertThat(updatedStatus).isNotEqualTo(initialStatus);
+        if (myProjectsPage.getProjectCount() > 0) {
+            String originalTitle = myProjectsPage.getProjectTitle(0);
+            System.out.println("Testing project: " + originalTitle);
+
+            String initialStatus = myProjectsPage.getStatusOfProjectByTitle(originalTitle);
+            System.out.println("Initial status: " + initialStatus);
+
+            String previousStatus = myProjectsPage.changeStatusOfProject(0);
+            System.out.println("Previous status was: " + previousStatus);
+
+            Thread.sleep(3000);
+
+            driver.navigate().refresh();
+            Thread.sleep(2000);
+
+            String updatedStatus = myProjectsPage.getStatusOfProjectByTitle(originalTitle);
+            System.out.println("Updated status: " + updatedStatus);
+
+            assertThat(updatedStatus).isNotEqualTo(previousStatus);
         }
     }
-
-
 
     @Test
     void testProjectCommentUpdate() throws InterruptedException {
         if (myProjectsPage.getProjectCount() > 0) {
-            String comment = "Test comment " + System.currentTimeMillis();
-            myProjectsPage.updateFirstProjectComment(comment);
+            String originalTitle = myProjectsPage.getProjectTitle(0);
+            System.out.println("Original title: " + originalTitle);
 
-            String actual = myProjectsPage.getCommentOfLastProject();
+            String comment = "Test comment " + System.currentTimeMillis();
+            myProjectsPage.updateProjectComment(0,comment);
+
+            String actual = myProjectsPage.getCommentOfProjectByTitle(originalTitle);
             assertThat(actual).isEqualTo(comment);
         }
     }
-
-
 
     @Test
     void testProjectCountDisplay() {
@@ -119,6 +184,7 @@ public class MyProjectsPageTest extends BaseSeleniumTest {
             assertThat(myProjectsPage.getProjectCount()).isEqualTo(displayedCount);
         }
     }
+
 
 
 

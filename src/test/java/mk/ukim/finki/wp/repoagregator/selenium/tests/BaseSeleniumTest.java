@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.openqa.selenium.Dimension;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SeleniumConfig.class)
@@ -26,12 +25,7 @@ public abstract class BaseSeleniumTest {
         driver.manage().window().fullscreen();
     }
 
-    @AfterEach
-    void tearDown() {
-//        if (driver != null) {
-//            driver.quit();
-//        }
-    }
+
 
     protected String getUrl(String path) {
         return "http://localhost:" + port + path;

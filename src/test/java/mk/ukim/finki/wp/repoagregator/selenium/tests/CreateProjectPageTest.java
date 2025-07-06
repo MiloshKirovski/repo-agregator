@@ -46,6 +46,26 @@ public class CreateProjectPageTest extends BaseSeleniumTest {
 
         assertThat(createProjectPage.successfulCreation()).isTrue();
     }
+    @Test
+    void testCreateProjectWithnotValidData() throws InterruptedException {
 
+        createProjectPage.createProject(
+                "",
+                "2025",
+                "This is a test project created by Selenium.",
+                "Оперативни системи",
+                "Ристе Стојанов",
+                "Hristijan",
+                "https://github.com/MiloshKirovski/repo-agregator"
+        );
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        assertThat(createProjectPage.successfulCreation()).isFalse();
+    }
 
 }

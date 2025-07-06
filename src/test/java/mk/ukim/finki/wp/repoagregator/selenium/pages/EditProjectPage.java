@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.repoagregator.selenium.pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -23,9 +24,6 @@ public class EditProjectPage {
     @FindBy(id = "name")
     private WebElement nameInput;
 
-    @FindBy(id = "year")
-    private WebElement yearInput;
-
     @FindBy(id = "description")
     private WebElement descriptionTextarea;
 
@@ -41,11 +39,15 @@ public class EditProjectPage {
         nameInput.sendKeys(newName);
     }
 
-    public void updateProjectYear(String newYear) {
-        wait.until(ExpectedConditions.visibilityOf(yearInput));
-        yearInput.clear();
-        yearInput.sendKeys(newYear);
+    public void cancelEdit() throws InterruptedException {
+        WebElement cancelButton = wait.until(ExpectedConditions.elementToBeClickable(
+                By.cssSelector("div.form-actions > a")));
+
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cancelButton);
+            Thread.sleep(1000);
+        cancelButton.click();
     }
+
 
     public void updateDescription(String newDescription) {
         wait.until(ExpectedConditions.visibilityOf(descriptionTextarea));

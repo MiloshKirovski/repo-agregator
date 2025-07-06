@@ -42,4 +42,13 @@ public class ProjectDetailsPageTest extends BaseSeleniumTest {
     void testRepositoryLinks() {
         assertThat(projectDetailsPage.hasRepositoryLinks()).isTrue();
     }
+    @Test
+    void testBackToProjectsNavigation() {
+
+        projectDetailsPage.clickBackToProjects();
+        String currentUrl = driver.getCurrentUrl();
+        assertThat(currentUrl).endsWith("/projects");
+    }
+
 }
+

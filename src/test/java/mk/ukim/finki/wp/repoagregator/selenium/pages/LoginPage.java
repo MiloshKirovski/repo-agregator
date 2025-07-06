@@ -1,6 +1,5 @@
 package mk.ukim.finki.wp.repoagregator.selenium.pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -30,12 +29,6 @@ public class LoginPage {
 
     @FindBy(css = ".login-header")
     private WebElement pageTitle;
-
-    @FindBy(css = ".card-subtitle")
-    private WebElement pageSubtitle;
-
-    @FindBy(css = ".logo img")
-    private WebElement finkiLogo;
 
     @FindBy(css = "body > div > div > div > div.project-header > h1")
     private WebElement successlogin;
@@ -87,9 +80,6 @@ public class LoginPage {
         return wait.until(ExpectedConditions.visibilityOf(errorAlert)).getText();
     }
 
-    public String getPageTitle() {
-        return wait.until(ExpectedConditions.visibilityOf(pageTitle)).getText();
-    }
 
     public boolean isPageLoaded() {
         return wait.until(ExpectedConditions.visibilityOf(pageTitle)).getText().contains("FINKI Repository");

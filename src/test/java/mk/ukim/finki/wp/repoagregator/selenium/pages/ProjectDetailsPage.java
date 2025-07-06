@@ -14,7 +14,7 @@ public class ProjectDetailsPage {
     private final WebDriverWait wait;
 
 
-    @FindBy(css = ".btn.btn-secondary[href*='projects']")
+    @FindBy(css = "body > div > div > a")
     private WebElement backToProjectsButton;
 
     @FindBy(css = "body > div > div > div.project-header > div > h1")
@@ -25,48 +25,6 @@ public class ProjectDetailsPage {
 
     @FindBy(css = "body > div > div > div.project-header > div > div > a")
     private List<WebElement> repositoryLinks;
-
-    @FindBy(css = "h3")
-    private List<WebElement> sectionHeaders;
-
-    @FindBy(xpath = "//h3[contains(text(), 'Опис на проект')]/following-sibling::*")
-    private WebElement projectDescription;
-
-    @FindBy(xpath = "//p[contains(text(), 'Нема достапен опис')]")
-    private WebElement noDescriptionMessage;
-
-    @FindBy(css = ".badge.badge-info")
-    private List<WebElement> teamMemberBadges;
-
-    @FindBy(xpath = "//p[contains(text(), 'Нема достапни членови')]")
-    private WebElement noTeamMembersMessage;
-
-    @FindBy(css = ".badge.badge-success")
-    private List<WebElement> mentorBadges;
-
-    @FindBy(xpath = "//p[contains(text(), 'Нема достапни ментори')]")
-    private WebElement noMentorsMessage;
-
-    @FindBy(css = ".badge.badge-primary")
-    private List<WebElement> courseBadges;
-
-    @FindBy(xpath = "//p[contains(text(), 'Нема достапни предмети')]")
-    private WebElement noCoursesMessage;
-
-    @FindBy(xpath = "//h3[contains(text(), 'Коментар')]/following-sibling::*")
-    private WebElement projectComment;
-
-    @FindBy(xpath = "//p[contains(text(), 'Нема коментар')]")
-    private WebElement noCommentMessage;
-
-    @FindBy(css = ".card-header h5")
-    private WebElement readmeHeader;
-
-    @FindBy(css = ".card-body")
-    private WebElement readmeContent;
-
-    @FindBy(xpath = "//h5[contains(text(), 'README не е достапен')]")
-    private WebElement noReadmeMessage;
 
     public ProjectDetailsPage(WebDriver driver) {
         this.driver = driver;
@@ -96,91 +54,6 @@ public class ProjectDetailsPage {
         return !repositoryLinks.isEmpty() && repositoryLinks.get(0).isDisplayed();
     }
 
-    public void clickRepositoryLink(int index) {
-        if (index < repositoryLinks.size()) {
-            wait.until(ExpectedConditions.elementToBeClickable(repositoryLinks.get(index)));
-            repositoryLinks.get(index).click();
-        }
-    }
 
-    public String getProjectDescription() {
-        try {
-            return wait.until(ExpectedConditions.visibilityOf(projectDescription)).getText();
-        } catch (Exception e) {
-            return noDescriptionMessage.isDisplayed() ? noDescriptionMessage.getText() : "";
-        }
-    }
 
-    public boolean hasDescription() {
-        try {
-            return projectDescription.isDisplayed() && !projectDescription.getText().trim().isEmpty();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public List<String> getTeamMembers() {
-        return teamMemberBadges.stream()
-                .filter(WebElement::isDisplayed)
-                .map(WebElement::getText)
-                .toList();
-    }
-
-    public boolean hasTeamMembers() {
-        return !teamMemberBadges.isEmpty() && teamMemberBadges.get(0).isDisplayed();
-    }
-
-    public List<String> getMentors() {
-        return mentorBadges.stream()
-                .filter(WebElement::isDisplayed)
-                .map(WebElement::getText)
-                .toList();
-    }
-
-    public boolean hasMentors() {
-        return !mentorBadges.isEmpty() && mentorBadges.get(0).isDisplayed();
-    }
-
-    public List<String> getCourses() {
-        return courseBadges.stream()
-                .filter(WebElement::isDisplayed)
-                .map(WebElement::getText)
-                .toList();
-    }
-
-    public boolean hasCourses() {
-        return !courseBadges.isEmpty() && courseBadges.get(0).isDisplayed();
-    }
-
-    public String getComment() {
-        try {
-            return projectComment.isDisplayed() ? projectComment.getText() : "";
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public boolean hasComment() {
-        try {
-            return projectComment.isDisplayed() && !projectComment.getText().trim().isEmpty();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public boolean hasReadme() {
-        try {
-            return readmeContent.isDisplayed() && !noReadmeMessage.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public String getReadmeContent() {
-        try {
-            return readmeContent.isDisplayed() ? readmeContent.getText() : "";
-        } catch (Exception e) {
-            return "";
-        }
-    }
 }
